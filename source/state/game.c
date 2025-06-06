@@ -15,7 +15,7 @@
 
 #define g 9.81
 
-void simulation(struct EngineCore *engine, enum state *state) {
+void game(struct EngineCore *engine, enum state *state) {
     struct ResourceManager *entityData = findResource(&engine->resource, "Entity");
     struct ResourceManager *screenData = findResource(&engine->resource, "ScreenData");
 
@@ -38,7 +38,7 @@ void simulation(struct EngineCore *engine, enum state *state) {
 
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
 
-    while (*state == SIMULATION && !shouldWindowClose(engine->window)) {
+    while (*state == GAME && !shouldWindowClose(engine->window)) {
         glfwPollEvents();
 
         updateInstances(entity, qEntity, engine->deltaTime.deltaTime);

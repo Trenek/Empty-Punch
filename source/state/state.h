@@ -5,9 +5,9 @@
 
 enum state {
     LOAD_RESOURCES,
-    LOAD_SIMULATION,
+    LOAD_GAME,
     MAIN_MENU,
-    SIMULATION,
+    GAME,
     PAUSE,
     WIN_SCREEN,
     LOSE,
@@ -17,8 +17,8 @@ enum state {
 struct EngineCore;
 struct renderPassObj;
 
-void simulation(struct EngineCore *engine, enum state *state);
+void game(struct EngineCore *engine, enum state *state);
 void loadResources(struct EngineCore *engine, enum state *state);
-void loadSimulation(struct EngineCore *engine, enum state *state);
+void loadGame(struct EngineCore *engine, enum state *state);
 
 #endif

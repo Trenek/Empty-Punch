@@ -5,8 +5,8 @@
 int main() {
     struct EngineCore engine = setup("Empty Punch");
     void (* const state[])(struct EngineCore *engine, enum state *state) = {
-        [SIMULATION] = simulation,
-        [LOAD_SIMULATION] = loadSimulation,
+        [GAME] = game,
+        [LOAD_GAME] = loadGame,
         [LOAD_RESOURCES] = loadResources,
     };
     enum state stateID = LOAD_RESOURCES;

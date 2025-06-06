@@ -148,5 +148,5 @@ void loadResources(struct EngineCore *engine, enum state *state) {
 
     loadSounds(engine);
 
-    *state = LOAD_SIMULATION;
+    *state = LOAD_GAME;
 }

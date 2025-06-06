@@ -1,5 +1,4 @@
 #include <cglm.h>
-#include <string.h>
 
 #include "renderPassObj.h"
 #include "engineCore.h"
@@ -97,10 +96,10 @@ void loadScreens(struct EngineCore *this) {
     addResource(&this->resource, "ScreenData", screenData, cleanupResources);
 }
 
-void loadSimulation(struct EngineCore *engine, enum state *state) {
+void loadGame(struct EngineCore *engine, enum state *state) {
     addEntities(engine);
 
     loadScreens(engine);
 
-    *state = SIMULATION;
+    *state = GAME;
 }
