@@ -79,6 +79,10 @@ void loadScreens(struct EngineCore *this) {
             },
         },
         .qData = 1,
+        .camera = {
+            .pos = { 0.0, 2.0, 4.0 },
+            .direction = { 0.0, -0.5, -1.0 }
+        },
         .updateCameraBuffer = updateFirstPersonCameraBuffer,
     }, &this->graphics), destroyRenderPassObj);
 
@@ -86,7 +90,7 @@ void loadScreens(struct EngineCore *this) {
     *hex = (struct instance){
         .pos = { 0.0f, 0.0f, 0.0f },
         .rotation = { 0.0f, 0.0f, 0.0f },
-        .fixedRotation = { 0.0f, 0.0f, 0.0f },
+        .fixedRotation = { glm_rad(90), 0.0f, 0.0f },
         .scale = { 1, 1, 1 },
         .textureIndex = 0,
         .shadow = false,

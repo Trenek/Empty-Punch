@@ -21,7 +21,24 @@ struct camera initCamera() {
     return result;
 }
 
-void moveCamera(struct WindowManager *windowControl, GLFWwindow *window, struct camera *camera, float deltaTime) {
+void moveCamera(struct WindowManager *windowControl, struct camera *camera, float deltaTime) {
+    float r = 1.0f;
+    float theta = 0.0f;
+    float phi = 0.0f;
+
+    float x = camera->direction[0];
+    float y = camera->direction[1];
+    float z = camera->direction[2];
+
+    theta = acos(z / sqrt(glm_pow2(x) + glm_pow2(y) + glm_pow2(z)));
+    phi = x > 0 ? atan(y / x) :
+          x < 0 && y >= 0 ? atan(y / x) + M_PI :
+          x < 0 && y < 0 ? atan(y / x) - M_PI :
+          x == 0 && y > 0 ? M_PI / 2 :
+          x == 0 && y < 0 ? - M_PI / 2 :
+          0;
+
+    /*
     mat4 id = {
         [0][0] = 1.0f,
         [1][1] = 1.0f,
@@ -65,41 +82,43 @@ void moveCamera(struct WindowManager *windowControl, GLFWwindow *window, struct 
         prevXPos = xpos;
         prevYPos = ypos;
     }
+    */
+    float speed = 90;
 
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_LEFT))
+        phi += glm_rad(speed) * deltaTime;
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_RIGHT))
+        phi -= glm_rad(speed) * deltaTime;
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_UP))
+        theta -= glm_rad(speed) * deltaTime;
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_DOWN))
+        theta += glm_rad(speed) * deltaTime;
 
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_LEFT)) camera->tilt[0] += glm_rad(18'000) * deltaTime;
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_RIGHT)) camera->tilt[0] -= glm_rad(18'000) * deltaTime;
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_UP)) camera->tilt[1] -= glm_rad(18'000) * deltaTime;
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_DOWN)) camera->tilt[1] += glm_rad(18'000) * deltaTime;
-
-    if (camera->tilt[1] > 80.0f) camera->tilt[1] = 80.0f;
-    if (camera->tilt[1] < -80.0f) camera->tilt[1] = -80.0f;
-
-    glm_rotate(id, glm_rad(camera->tilt[0]), (vec3) { 0.0f, 0.0f, 1.0f });
-    glm_rotate(id, glm_rad(camera->tilt[1]), (vec3) { -initialDirection[1], initialDirection[0], 0.0f });
-    glm_mat4_mulv3(id, initialDirection, 1.0f, camera->direction);
-
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_W)) {
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_W)) {
         camera->pos[0] += camera->direction[0] * 16.0f * deltaTime;
         camera->pos[1] += camera->direction[1] * 16.0f * deltaTime;
     }
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_S)) {
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_S)) {
         camera->pos[0] -= camera->direction[0] * 16.0f * deltaTime;
         camera->pos[1] -= camera->direction[1] * 16.0f * deltaTime;
     }
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_A)) {
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_A)) {
         camera->pos[0] -= camera->direction[1] * 16.0f * deltaTime;
         camera->pos[1] += camera->direction[0] * 16.0f * deltaTime;
     }
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_D)) {
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_D)) {
         camera->pos[0] += camera->direction[1] * 16.0f * deltaTime;
         camera->pos[1] -= camera->direction[0] * 16.0f * deltaTime;
     }
 
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_SPACE)) {
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_SPACE)) {
         camera->pos[2] += 16.0f * deltaTime;
     }
-    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) {
+    if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_LEFT_SHIFT)) {
         camera->pos[2] -= 16.0f * deltaTime;
     }
+
+    camera->direction[0] = r * sin(theta) * cos(phi);
+    camera->direction[1] = r * sin(theta) * sin(phi);
+    camera->direction[2] = r * cos(theta);
 }

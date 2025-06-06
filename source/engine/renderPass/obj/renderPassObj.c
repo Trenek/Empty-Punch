@@ -21,8 +21,10 @@ struct renderPassObj *createRenderPassObj(struct renderPassBuilder builder, stru
         .qData = builder.qData,
         .cameraDescriptorPool = createCameraDescriptorPool(vulkan->device),
         .cameraDescriptorSetLayout = createCameraDescriptorSetLayout(vulkan->device),
-        .updateCameraBuffer = builder.updateCameraBuffer
+        .updateCameraBuffer = builder.updateCameraBuffer,
+        .camera = builder.camera
     };
+    glm_vec3_normalize(result->camera.direction);
 
     memcpy(result->data, builder.data, sizeof(struct pipelineConnection) * builder.qData);
     memcpy(result->color, builder.color, sizeof(double) * 4);
@@ -38,7 +40,6 @@ struct renderPassObj *createRenderPassObj(struct renderPassBuilder builder, stru
 
     createDescriptorSets(result->cameraDescriptorSet, vulkan->device, result->cameraDescriptorPool, result->cameraDescriptorSetLayout);
     bindCameraBuffersToDescriptorSets(result->cameraDescriptorSet, vulkan->device, result->cameraBuffer);
-    result->camera = initCamera();
 
     return result;
 }
