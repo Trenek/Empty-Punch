@@ -5,22 +5,6 @@
 
 #include "windowManager.h"
 
-struct camera initCamera() {
-    struct camera result = {
-        .pos = {
-            [0] = 0.0f,
-            [1] = 20.0f,
-            [2] = 0.0f,
-        },
-        .tilt = {
-            [0] = 45.0f,
-            [1] = 00.0f
-        }
-    };
-
-    return result;
-}
-
 void moveCamera(struct WindowManager *windowControl, struct camera *camera, float deltaTime) {
     float r = 1.0f;
     float theta = 0.0f;
@@ -38,51 +22,39 @@ void moveCamera(struct WindowManager *windowControl, struct camera *camera, floa
           x == 0 && y < 0 ? - M_PI / 2 :
           0;
 
-    /*
-    mat4 id = {
-        [0][0] = 1.0f,
-        [1][1] = 1.0f,
-        [2][2] = 1.0f,
-        [3][3] = 1.0f,
-    };
-    vec3 initialDirection = {
-        -1.0f,
-        -1.0f,
-        0.0f
-    };
     static double prevXPos = 0;
     static double prevYPos = 0;
 
     if ((KEY_PRESS | KEY_CHANGE) == getKeyState(windowControl, GLFW_KEY_C)) {
-        if (GLFW_CURSOR_DISABLED == glfwGetInputMode(window, GLFW_CURSOR)) {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        if (GLFW_CURSOR_DISABLED == glfwGetInputMode(windowControl->window, GLFW_CURSOR)) {
+            glfwSetInputMode(windowControl->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
         else {
             int width = 0;
             int height = 0;
 
-            glfwGetWindowSize(window, &width, &height);
+            glfwGetWindowSize(windowControl->window, &width, &height);
 
-            glfwSetCursorPos(window, 0.5 * width, 0.5 * height);
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            glfwGetCursorPos(window, &prevXPos, &prevYPos);
+            glfwSetCursorPos(windowControl->window, 0.5 * width, 0.5 * height);
+            glfwSetInputMode(windowControl->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwGetCursorPos(windowControl->window, &prevXPos, &prevYPos);
         }
     }
 
-    if (GLFW_CURSOR_DISABLED == glfwGetInputMode(window, GLFW_CURSOR)) {
+    if (GLFW_CURSOR_DISABLED == glfwGetInputMode(windowControl->window, GLFW_CURSOR)) {
         double xpos;
         double ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
+        glfwGetCursorPos(windowControl->window, &xpos, &ypos);
 
         if (prevXPos == 0 && prevYPos == 0);
         else {
-            camera->tilt[0] -= (xpos - prevXPos) * 10 * deltaTime;
-            camera->tilt[1] += (ypos - prevYPos) * 10 * deltaTime;
+            phi -= (xpos - prevXPos) * deltaTime;
+            theta += (ypos - prevYPos) * deltaTime;
         }
         prevXPos = xpos;
         prevYPos = ypos;
     }
-    */
+
     float speed = 90;
 
     if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_LEFT))
