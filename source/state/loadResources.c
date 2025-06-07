@@ -22,12 +22,12 @@ static void addTextures(struct EngineCore *this) {
         "textures/player.png",
     }), unloadTextures);
     addResource(textureManager, "cubeMap", loadCubeMaps(&this->graphics, (const char *[]) {
-        "textures/CubeMaps/xpos.png",
-        "textures/CubeMaps/xneg.png",
-        "textures/CubeMaps/ypos.png",
-        "textures/CubeMaps/yneg.png",
-        "textures/CubeMaps/zpos.png",
-        "textures/CubeMaps/zneg.png",
+        "textures/CubeMap_purple/xpos.png",
+        "textures/CubeMap_purple/xneg.png",
+        "textures/CubeMap_purple/ypos.png",
+        "textures/CubeMap_purple/yneg.png",
+        "textures/CubeMap_purple/zpos.png",
+        "textures/CubeMap_purple/zneg.png",
     }), unloadTextures);
 
     addResource(&this->resource, "textures", textureManager, cleanupResources);
