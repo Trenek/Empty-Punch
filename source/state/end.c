@@ -65,17 +65,17 @@ void end(struct EngineCore *engine, enum state *state) {
     };
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
 
-    while (*state == END) {
+    float time = 5;
+    while (time > 0) {
         renderPass[1]->coordinates[0] = genRand(0.1);
         renderPass[1]->coordinates[1] = genRand(0.1);
         drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);
 
-
-        engine->time += 1;
-        if (engine->time > 1000 || engine->time < -1000) {
-            *state = EXIT;
-        } 
+        time -= engine->deltaTime.deltaTime;
     }
 
-    *state = END;
+    *state = EXIT;
+
+    vkDeviceWaitIdle(engine->graphics.device);
+    destroyRenderPassObjArr(qRenderPass, renderPass);
 }
