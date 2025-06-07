@@ -11,6 +11,18 @@
 #include "stringBuilder.h"
 #include "entity.h"
 
+void loadScene(struct EngineCore *this) {
+    struct ResourceManager *entityData = calloc(1, sizeof(struct ResourceManager));
+
+    addResource(entityData, "wysokosc", malloc(sizeof(int)), free);
+    addResource(entityData, "szerokosc", malloc(sizeof(int)), free);
+
+    *(int *)findResource(entityData, "wysokosc") = 11;
+    *(int *)findResource(entityData, "szerokosc") = 11;
+
+    addResource(&this->resource, "scena", entityData, cleanupResources);
+}
+
 void addString(
     struct ResourceManager *entityData,
     struct ResourceManager *modelData,
@@ -32,8 +44,10 @@ void addString(
 }
 
 static void addEntities(struct EngineCore *this) {
-    int n = 10;
-    int m = 10;
+    struct ResourceManager *scene = findResource(&this->resource, "scena");
+
+    int n = *(int *)findResource(scene, "wysokosc");
+    int m = *(int *)findResource(scene, "szerokosc");
     struct ResourceManager *entityData = calloc(1, sizeof(struct ResourceManager));
     struct ResourceManager *modelData = findResource(&this->resource, "modelData");
 
@@ -59,7 +73,7 @@ static void addEntities(struct EngineCore *this) {
     struct instance *player = ((struct Entity *)findResource(entityData, "player"))->instance;
 
     for (int j = 0; j < m; j += 1) {
-        for (int i = 0; i < n; i += 1) {
+        for (int i = 0; i < (n - (j % 2)); i += 1) {
             hex[j * n + i] = (struct instance){
                 .pos = { - i * sqrt(3) - sqrt(3) * (j % 2) / 2, 1.5f * j, 0.0f },
                 .rotation = { 0.0f, 0.0f, 0.0f },
@@ -131,6 +145,7 @@ void loadScreens(struct EngineCore *this) {
 }
 
 void loadGame(struct EngineCore *engine, enum state *state) {
+    loadScene(engine);
     addEntities(engine);
 
     loadScreens(engine);
