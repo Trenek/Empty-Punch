@@ -158,6 +158,8 @@ void loadScreens(struct EngineCore *this) {
         findResource(graphicsPipelineData, "Floor"),
         findResource(graphicsPipelineData, "Text"),
         findResource(graphicsPipelineData, "Animated Model"),
+        findResource(graphicsPipelineData, "Flat"),
+        findResource(graphicsPipelineData, "Skybox"),
     };
 
     struct ResourceManager *renderPassCoreData = findResource(&this->resource, "RenderPassCoreData");
@@ -166,8 +168,17 @@ void loadScreens(struct EngineCore *this) {
         findResource(renderPassCoreData, "Stay")
     };
 
+    struct Entity *entity[] = {
+        findResource(entityData, "Main Menu"),
+        findResource(entityData, "Flat 1"),
+        findResource(entityData, "Background"),
+        findResource(entityData, "Play"),
+        findResource(entityData, "Exit"),
+        findResource(entityData, "Flat 2"),
+    };
+
     addResource(screenData, "Base Screen", createRenderPassObj((struct renderPassBuilder){
-        .renderPass = renderPassArr[0],
+        .renderPass = renderPassArr[1],
         .color = { 0.0, 0.0, 0.0, 1.0 },
         .coordinates = { 0.0, 0.0, 1.0, 1.0 },
         .data = (struct pipelineConnection[]) {
@@ -194,6 +205,44 @@ void loadScreens(struct EngineCore *this) {
         },
         .updateCameraBuffer = updateFirstPersonCameraBuffer,
     }, &this->graphics), destroyRenderPassObj);
+    addResource(screenData, "Skybox", createRenderPassObj((struct renderPassBuilder){
+        .renderPass = renderPassArr[0],
+        .coordinates = { 0.0, 0.0, 1.0, 1.0 },
+        .data = (struct pipelineConnection[]) {
+            {
+                .pipe = pipe[4],
+                .entity = &entity[2],
+                .qEntity = 1
+            }
+        },
+        .qData = 1,
+        .updateCameraBuffer = updateFirstPersonCameraBuffer
+    }, &this->graphics), destroyRenderPassObj);
+    addResource(screenData, "Interface", createRenderPassObj((struct renderPassBuilder){
+        .renderPass = renderPassArr[1],
+        .coordinates = { 0.0, 0.0, 1.0, 1.0 },
+        .data = (struct pipelineConnection[]) {
+            {
+                .pipe = pipe[1],
+                .entity = (struct Entity* []) {
+                    entity[0],
+                    entity[3],
+                    entity[4],
+                },
+                .qEntity = 3
+            },
+            {
+                .pipe = pipe[3],
+                .entity = (struct Entity* []) {
+                    entity[1],
+                    entity[5],
+                },
+                .qEntity = 2
+            },
+        },
+        .qData = 2,
+        .updateCameraBuffer = updateFirstPersonCameraBuffer
+    }, &this->graphics), destroyRenderPassObj),
 
     addResource(&this->resource, "ScreenData", screenData, cleanupResources);
 }
