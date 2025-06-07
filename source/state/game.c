@@ -29,6 +29,7 @@ void game(struct EngineCore *engine, enum state *state) {
     size_t qEntity = sizeof(entity) / sizeof(struct Entity *);
 
     struct ResourceManager *renderPassCoreData = findResource(&engine->resource, "RenderPassCoreData");
+    struct ResourceManager *sceneManagerData = findResource(&engine->resource, "scena");
     struct renderPassCore *renderPassArr[] = { 
         findResource(renderPassCoreData, "Clean"),
         findResource(renderPassCoreData, "Stay")
@@ -41,26 +42,23 @@ void game(struct EngineCore *engine, enum state *state) {
 
     struct player playerStr = {
         .model = entity[1],
-        .actualModel = findResource(modelData, "player")
+        .actualModel = findResource(modelData, "player"),
+        .height = *(int *)findResource(sceneManagerData, "wysokosc"),
+        .width = *(int *)findResource(sceneManagerData, "szerokosc"),
+        .hex = entity[0]
     };
+    playerStr.x = playerStr.width / 2;
+    playerStr.y = playerStr.height / 2;
 
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
     
-    struct instance *player = entity[1]->instance;
-
     while (*state == GAME && !shouldWindowClose(engine->window)) {
         glfwPollEvents();
 
-        posePlayer(&playerStr, engine->deltaTime.deltaTime);
+        movePlayer(&playerStr, &engine->window, engine->deltaTime.deltaTime);
         updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
 
         moveCamera(&engine->window, &renderPass[0]->camera, engine->deltaTime.deltaTime);
-        
-        if ((KEY_PRESS | KEY_REPEAT) == getKeyState(&engine->window, GLFW_KEY_T)) player[0].pos[1] -= 0.01;
-        if ((KEY_PRESS | KEY_REPEAT) == getKeyState(&engine->window, GLFW_KEY_G)) player[0].pos[1] += 0.01;
-        if ((KEY_PRESS | KEY_REPEAT) == getKeyState(&engine->window, GLFW_KEY_F)) player[0].pos[0] += 0.01;
-        if ((KEY_PRESS | KEY_REPEAT) == getKeyState(&engine->window, GLFW_KEY_H)) player[0].pos[0] -= 0.01;
-
         drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);
     }
 }

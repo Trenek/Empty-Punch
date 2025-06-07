@@ -101,7 +101,11 @@ static void addEntities(struct EngineCore *this) {
     for (int j = 0; j < m; j += 1) {
         for (int i = 0; i < (n - (j % 2)); i += 1) {
             hex[j * n + i] = (struct instance){
-                .pos = { - i * sqrt(3) - sqrt(3) * (j % 2) / 2, 1.5f * j, 0.0f },
+                .pos = { 
+                    - (i - (n - 1) / 2.0) * sqrt(3) - sqrt(3) * (j % 2) / 2,
+                    1.5f * (j - (m - 1) / 2.0),
+                    0.0f
+                },
                 .rotation = { 0.0f, 0.0f, 0.0f },
                 .fixedRotation = { glm_rad(90), 0.0f, 0.0f },
                 .scale = { 0.8, 1, 0.8 },
@@ -168,8 +172,8 @@ void loadScreens(struct EngineCore *this) {
         },
         .qData = 2,
         .camera = {
-            .pos = { 0.0, 2.0, 4.0 },
-            .direction = { 0.0, -2.0, -4.0 }
+            .pos = { 0.0, 10.0, 20.0 },
+            .direction = { 0.0, -10.0, -20.0 }
         },
         .updateCameraBuffer = updateFirstPersonCameraBuffer,
     }, &this->graphics), destroyRenderPassObj);
