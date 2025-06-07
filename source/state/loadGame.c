@@ -71,8 +71,15 @@ static void addEntities(struct EngineCore *this) {
         INS(instance, instanceBuffer),
     }, &this->graphics), destroyEntity);
     addString(entityData, modelData, objectLayout, this, "Main Menu", "Main Menu");
-    addResource(entityData, "Flat", createModel((struct ModelBuilder) {
-        .instanceCount = 3,
+    addResource(entityData, "Flat 1", createModel((struct ModelBuilder) {
+        .instanceCount = 1,
+        .modelData = findResource(modelData, "flat"),
+        .objectLayout = objectLayout->descriptorSetLayout,
+
+        INS(instance, instanceBuffer),
+    }, &this->graphics), destroyEntity);
+    addResource(entityData, "Flat 2", createModel((struct ModelBuilder) {
+        .instanceCount = 1,
         .modelData = findResource(modelData, "flat"),
         .objectLayout = objectLayout->descriptorSetLayout,
 

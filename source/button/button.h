@@ -2,7 +2,7 @@ struct Button {
     int joystick;
     bool isClicked;
     int qButton;
-    struct Entity *entity;
+    struct Entity **entity;
     struct actualModel *model;
     struct CameraBuffer *camera;
     int *newState;

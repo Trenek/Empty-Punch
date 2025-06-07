@@ -32,7 +32,7 @@ static void normalShadowButton(struct GraphicsSetup gs, struct WindowManager wm,
     for (int i = 0; i < button->qButton; i += 1) {
         vec3 temp2[4]; {
             mat4 tempMat; {
-                glm_mat4_mul(button->camera->proj, ((struct instanceBuffer *)button->entity->buffer[0])[i].modelMatrix, tempMat);
+                glm_mat4_mul(button->camera->proj, ((struct instanceBuffer *)button->entity[i]->buffer[0])->modelMatrix, tempMat);
             }
             glm_mat4_mulv3(tempMat, temp[0].pos, 1, temp2[0]);
             glm_mat4_mulv3(tempMat, temp[1].pos, 1, temp2[1]);
@@ -45,7 +45,7 @@ static void normalShadowButton(struct GraphicsSetup gs, struct WindowManager wm,
         float down = MIN(MIN(temp2[0][1], temp2[1][1]), MIN(temp2[2][1], temp2[3][1]));
         float up = MAX(MAX(temp2[0][1], temp2[1][1]), MAX(temp2[2][1], temp2[3][1]));
 
-        if (((struct instance *)button->entity->instance)[i].shadow = p[0] > left && p[0] < right && p[1] > down && p[1] < up) {
+        if (((struct instance *)button->entity[i]->instance)->shadow = p[0] > left && p[0] < right && p[1] > down && p[1] < up) {
             button->chosen = i;
         }
     }
@@ -76,10 +76,10 @@ void gamepadShadowButton(struct WindowManager wm, struct Button *button) {
         if (button->chosen >= button->qButton) button->chosen = 0;
 
         for (int i = 0; i < button->qButton; i += 1) {
-            ((struct instance *)button->entity->instance)[i].shadow = 0;
+            ((struct instance *)button->entity[i]->instance)->shadow = 0;
         }
 
-        ((struct instance *)button->entity->instance)[button->chosen].shadow = 1;
+        ((struct instance *)button->entity[button->chosen]->instance)->shadow = 1;
 
         button->isClicked = JP(GLFW_GAMEPAD_BUTTON_A);
 
