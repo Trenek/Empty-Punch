@@ -1,8 +1,8 @@
 #version 450
 
-layout(location = 0) in vec3 inPosition;
-layout(location = 1) in vec3 inColor;
-layout(location = 2) in vec2 inTexCoord;
+layout(location = 0) in  vec3 inPosition;
+layout(location = 1) in  vec3 inColor;
+layout(location = 2) in  vec2 inTexCoord;
 layout(location = 3) in ivec4 inBoneIDs;
 layout(location = 4) in  vec4 inWeights;
 
@@ -20,7 +20,6 @@ struct ObjectData {
     uint index;
     mat4 model;
     bool shadow;
-    vec4 color;
 };
 
 layout(std140, set = 0, binding = 0) readonly buffer ObjectBuffer{
@@ -31,20 +30,35 @@ layout(std140, set = 0, binding = 1) readonly buffer MeshBuffer{
 	mat4 localModel[];
 } mesh;
 
+layout(std140, set = 0, binding = 2) readonly buffer AnimBuffer{
+	mat4 transform[];
+} joint;
+
 layout(push_constant) uniform constants {
 	int meshID;
 } PushConstants;
 
+vec3 applyBoneTransform(vec4 p) {
+    vec4 result = vec4(0.0);
+
+    for (int i = 0; i < 4; i += 1) {
+        result += joint.transform[inBoneIDs[i]] * (inWeights[i] * p);
+    }
+
+    return result.xyz;
+}
+
 void main() {
-    gl_Position = (
+    vec3 position = applyBoneTransform(vec4(inPosition, 1.0));
+
+    gl_Position = 
         ubo.proj * 
         ubo.view * 
         instance.objects[gl_InstanceIndex].model * 
         mesh.localModel[PushConstants.meshID] * 
-        vec4(inPosition, 1.0)
-    );
+        vec4(position, 1.0);
 
-    fragColor = instance.objects[gl_InstanceIndex].color;
+    fragColor = vec4(inColor, 1.0);
     fragTexCoord = inTexCoord;
     fragTexIndex = instance.objects[gl_InstanceIndex].index;
     shadow = instance.objects[gl_InstanceIndex].shadow ? 1 : 0;

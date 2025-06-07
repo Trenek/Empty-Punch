@@ -50,8 +50,10 @@ static void addEntities(struct EngineCore *this) {
     int m = *(int *)findResource(scene, "szerokosc");
     struct ResourceManager *entityData = calloc(1, sizeof(struct ResourceManager));
     struct ResourceManager *modelData = findResource(&this->resource, "modelData");
+    struct ResourceManager *objectData = findResource(&this->resource, "objectLayout");
 
-    struct descriptorSetLayout *objectLayout = findResource(findResource(&this->resource, "objectLayout"), "object");
+    struct descriptorSetLayout *objectLayout = findResource(objectData, "object");
+    struct descriptorSetLayout *animLayout = findResource(objectData, "anim");
 
     addResource(entityData, "hex", createModel((struct ModelBuilder) {
         .instanceCount = n * m,
@@ -64,7 +66,7 @@ static void addEntities(struct EngineCore *this) {
     addResource(entityData, "player", createModel((struct ModelBuilder) {
         .instanceCount = 1,
         .modelData = findResource(modelData, "player"),
-        .objectLayout = objectLayout->descriptorSetLayout,
+        .objectLayout = animLayout->descriptorSetLayout,
 
         INS(instance, instanceBuffer),
     }, &this->graphics), destroyEntity);
@@ -93,8 +95,8 @@ static void addEntities(struct EngineCore *this) {
     player[0] = (struct instance){
         .pos = { 0.0f, 0.0f, 0.0f },
         .rotation = { 0.0f, 0.0f, 0.0f },
-        .fixedRotation = { glm_rad(90), 0.0f, 0.0f },
-        .scale = { 10e-30, 10e-30, 10e-30 },
+        .fixedRotation = { glm_rad(90), glm_rad(180), 0.0f },
+        .scale = { 3 * 10e-2, 3 * 10e-2, 3 * 10e-2 },
         .textureIndex = 1,
         .shadow = false,
     };
@@ -111,6 +113,7 @@ void loadScreens(struct EngineCore *this) {
     struct graphicsPipeline *pipe[] = {
         findResource(graphicsPipelineData, "Floor"),
         findResource(graphicsPipelineData, "Text"),
+        findResource(graphicsPipelineData, "Animated Model"),
     };
 
     struct ResourceManager *renderPassCoreData = findResource(&this->resource, "RenderPassCoreData");
@@ -127,13 +130,19 @@ void loadScreens(struct EngineCore *this) {
             {
                 .pipe = pipe[0],
                 .entity = (struct Entity* []) {
-                    findResource(entityData, "player"),
                     findResource(entityData, "hex"),
                 },
-                .qEntity = 2
+                .qEntity = 1
+            },
+            {
+                .pipe = pipe[2],
+                .entity = (struct Entity* []) {
+                    findResource(entityData, "player"),
+                },
+                .qEntity = 1
             },
         },
-        .qData = 1,
+        .qData = 2,
         .camera = {
             .pos = { 0.0, 2.0, 4.0 },
             .direction = { 0.0, -2.0, -4.0 }
