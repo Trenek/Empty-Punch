@@ -34,8 +34,6 @@ void movePlayer(struct player *p, struct WindowManager *window, enum state *, fl
 
     p->time += deltaTime;
 
-    bool justDied = false;
-
     int index = p->x + p->grip->width * p->y;
     if ((p->x >= p->grip->width - (1 == p->y % 2)) ||
         (p->y >= p->grip->height) ||
@@ -44,7 +42,7 @@ void movePlayer(struct player *p, struct WindowManager *window, enum state *, fl
 
             if(!p->isDead){
                 p->isDead = true;
-                justDied = true;
+                playSound(&engine->soundManager, 1, false, 1.0f);
             }
 
             player->pos[0] = - (p->x - (p->grip->width - 1) / 2.0) * sqrt(3) - sqrt(3) * (p->y % 2) / 2;
@@ -64,11 +62,11 @@ void movePlayer(struct player *p, struct WindowManager *window, enum state *, fl
         p->grip->array[index] -= deltaTime;
         if (p->grip->array[index] < 0) {
             hex[index].pos[2] = -100;
-            playSound(&engine->soundManager, justDied ? 4 : 3, false, 1.0f);
+            playSound(&engine->soundManager,4, false, 1.0f);
         }
         else if (p->grip->array[index] < 1) {
             hex[index].textureInc = 2;
-            playSound(&engine->soundManager, justDied ? 1 : 2, false, 1.0f);
+            playSound(&engine->soundManager, p->isDead ? 4 : 2, false, 1.0f);
             
         }
 

@@ -96,10 +96,10 @@ void game(struct EngineCore *engine, enum state *state) {
         movePlayer(&playerStr[0], &engine->window, state, engine->deltaTime.deltaTime, engine);
         movePlayer(&playerStr[1], &engine->window, state, engine->deltaTime.deltaTime, engine);
         if (adam[0]->pos[2] < -10) {
-            *state = END;
+            *state = EXIT;
         }
         else if (adam[1]->pos[2] < -10) {
-            *state = END;
+            *state = EXIT;
         }
 
         updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
