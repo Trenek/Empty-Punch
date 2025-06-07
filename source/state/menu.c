@@ -83,7 +83,7 @@ void menu(struct EngineCore *engine, enum state *state) {
         .model = findResource(modelData, "flat"),
         .camera = renderPass[0]->cameraBufferMapped[0],
         .newState = (int []) {
-            LOAD_GAME,
+            GAME,
             EXIT
         },
         .chosen = 0,
