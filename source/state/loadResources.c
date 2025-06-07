@@ -21,6 +21,14 @@ static void addTextures(struct EngineCore *this) {
         "textures/hex_small.png",
         "textures/player.png",
     }), unloadTextures);
+    addResource(textureManager, "cubeMap", loadCubeMaps(&this->graphics, (const char *[]) {
+        "textures/CubeMaps/xpos.png",
+        "textures/CubeMaps/xneg.png",
+        "textures/CubeMaps/ypos.png",
+        "textures/CubeMaps/yneg.png",
+        "textures/CubeMaps/zpos.png",
+        "textures/CubeMaps/zneg.png",
+    }), unloadTextures);
 
     addResource(&this->resource, "textures", textureManager, cleanupResources);
 }
@@ -31,6 +39,7 @@ static void addModelData(struct EngineCore *this) {
     addResource(modelData, "player", loadModel("models/player.glb", &this->graphics), destroyActualModel);
     addResource(modelData, "hex", loadModel("models/hex.glb", &this->graphics), destroyActualModel);
     addResource(modelData, "font", loadModel("fonts/c.ttf", &this->graphics), destroyActualModel);
+    addResource(modelData, "flat", loadModel("models/my_model2d.obj", &this->graphics), destroyActualModel);
 
     addResource(&this->resource, "modelData", modelData, cleanupResources);
 }
@@ -110,8 +119,11 @@ static void createGraphicPipelines(struct EngineCore *this) {
     struct ResourceManager *graphicPipelinesData = calloc(1, sizeof(struct ResourceManager));
     struct ResourceManager *renderPassCoreData = findResource(&this->resource, "RenderPassCoreData");
     struct ResourceManager *objectData = findResource(&this->resource, "objectLayout");
+    struct ResourceManager *textureData = findResource(&this->resource, "textures");
 
-    struct Textures *colorTexture = findResource(findResource(&this->resource, "textures"), "Color");
+    struct Textures *colorTexture = findResource(textureData, "Color");
+    struct Textures *cubeMap = findResource(textureData, "cubeMap");
+
     struct descriptorSetLayout *objectLayout = findResource(objectData, "object");
     struct descriptorSetLayout *animLayout = findResource(objectData, "anim");
     struct descriptorSetLayout *cameraLayout = findResource(objectData, "camera");
@@ -172,6 +184,42 @@ static void createGraphicPipelines(struct EngineCore *this) {
 
         Vert(FontVertex),
         .operation = VK_COMPARE_OP_LESS,
+        .cullFlags = VK_CULL_MODE_BACK_BIT,
+
+        .cameraLayout = cameraLayout->descriptorSetLayout
+    }, &this->graphics), destroyObjGraphicsPipeline);
+    addResource(graphicPipelinesData, "Flat", createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
+        .qRenderPassCore = qRenderPass,
+        .renderPassCore = renderPass,
+        .vertexShader = "shaders/vert2d.spv",
+        .fragmentShader = "shaders/frag2d.spv",
+        .minDepth = 0.0f,
+        .maxDepth = 1.0f,
+        .texture = &colorTexture->descriptor,
+        .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+
+        .objectLayout = objectLayout->descriptorSetLayout,
+
+        Vert(AnimVertex),
+        .operation = VK_COMPARE_OP_LESS,
+        .cullFlags = VK_CULL_MODE_NONE,
+
+        .cameraLayout = cameraLayout->descriptorSetLayout
+    }, &this->graphics), destroyObjGraphicsPipeline);
+    addResource(graphicPipelinesData, "Skybox", createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
+        .qRenderPassCore = qRenderPass,
+        .renderPassCore = renderPass,
+        .vertexShader = "shaders/skyboxV.spv",
+        .fragmentShader = "shaders/skyboxF.spv",
+        .minDepth = 0.0f,
+        .maxDepth = 1.0f,
+        .texture = &cubeMap->descriptor,
+        .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+
+        .objectLayout = objectLayout->descriptorSetLayout,
+
+        Vert(AnimVertex),
+        .operation = VK_COMPARE_OP_LESS_OR_EQUAL,
         .cullFlags = VK_CULL_MODE_BACK_BIT,
 
         .cameraLayout = cameraLayout->descriptorSetLayout

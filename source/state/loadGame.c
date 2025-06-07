@@ -70,6 +70,23 @@ static void addEntities(struct EngineCore *this) {
 
         INS(instance, instanceBuffer),
     }, &this->graphics), destroyEntity);
+    addString(entityData, modelData, objectLayout, this, "Main Menu", "Main Menu");
+    addResource(entityData, "Flat", createModel((struct ModelBuilder) {
+        .instanceCount = 3,
+        .modelData = findResource(modelData, "flat"),
+        .objectLayout = objectLayout->descriptorSetLayout,
+
+        INS(instance, instanceBuffer),
+    }, &this->graphics), destroyEntity);
+    addResource(entityData, "Background", createModel((struct ModelBuilder) {
+        .instanceCount = 1,
+        .modelData = findResource(modelData, "skyBox"),
+        .objectLayout = objectLayout->descriptorSetLayout,
+
+        INS(instance, instanceBuffer),
+    }, &this->graphics), destroyEntity);
+    addString(entityData, modelData, objectLayout, this, "Play", "Play");
+    addString(entityData, modelData, objectLayout, this, "Exit", "Exit");
 
     struct instance *hex = ((struct Entity *)findResource(entityData, "hex"))->instance;
     struct instance *player = ((struct Entity *)findResource(entityData, "player"))->instance;
@@ -159,5 +176,5 @@ void loadGame(struct EngineCore *engine, enum state *state) {
 
     loadScreens(engine);
 
-    *state = GAME;
+    *state = MAIN_MENU;
 }

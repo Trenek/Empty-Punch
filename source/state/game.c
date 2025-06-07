@@ -16,15 +16,6 @@
 
 #define g 9.81
 
-// lewa strona - *, modyfikatory, typy proste, np. int, char
-// prawa strona - [], ()
-
-char (*(*(*returnArray(int n))[])())[50] {
-    char (*(*(*array)[])())[50] = malloc(sizeof(char (*(*(*)[])())[50]) * n);
-
-    return array;
-}
-
 void game(struct EngineCore *engine, enum state *state) {
     struct ResourceManager *modelData = findResource(&engine->resource, "modelData");
     struct ResourceManager *entityData = findResource(&engine->resource, "Entity");

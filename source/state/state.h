@@ -20,5 +20,6 @@ struct renderPassObj;
 void game(struct EngineCore *engine, enum state *state);
 void loadResources(struct EngineCore *engine, enum state *state);
 void loadGame(struct EngineCore *engine, enum state *state);
+void menu(struct EngineCore *engine, enum state *state);
 
 #endif
