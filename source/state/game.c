@@ -44,14 +44,6 @@ void game(struct EngineCore *engine, enum state *state) {
         updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
 
         moveCamera(&engine->window, &renderPass[0]->camera, engine->deltaTime.deltaTime);
-        printf("\r(%f, %f, %f), (%f, %f, %f)",
-            renderPass[0]->camera.pos[0],
-            renderPass[0]->camera.pos[1],
-            renderPass[0]->camera.pos[2],
-            renderPass[0]->camera.direction[0],
-            renderPass[0]->camera.direction[1],
-            renderPass[0]->camera.direction[2]
-        );
 
         drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);
     }

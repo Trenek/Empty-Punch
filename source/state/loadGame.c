@@ -32,18 +32,35 @@ void addString(
 }
 
 static void addEntities(struct EngineCore *this) {
+    int n = 10;
+    int m = 10;
     struct ResourceManager *entityData = calloc(1, sizeof(struct ResourceManager));
     struct ResourceManager *modelData = findResource(&this->resource, "modelData");
 
     struct descriptorSetLayout *objectLayout = findResource(findResource(&this->resource, "objectLayout"), "object");
 
     addResource(entityData, "hex", createModel((struct ModelBuilder) {
-        .instanceCount = 1,
+        .instanceCount = n * m,
         .modelData = findResource(modelData, "hex"),
         .objectLayout = objectLayout->descriptorSetLayout,
 
         INS(instance, instanceBuffer),
     }, &this->graphics), destroyEntity);
+
+    struct instance *hex = ((struct Entity *)findResource(entityData, "hex"))->instance;
+    for (int j = 0; j < m; j += 1) {
+        for (int i = 0; i < n; i += 1) {
+            hex[j * n + i] = (struct instance){
+                .pos = { - i * sqrt(3) - sqrt(3) * (j % 2) / 2, 1.5f * j, 0.0f },
+                .rotation = { 0.0f, 0.0f, 0.0f },
+                .fixedRotation = { glm_rad(90), 0.0f, 0.0f },
+                .scale = { 1, 1, 1 },
+                .textureIndex = 0,
+                .shadow = false,
+                .color = { j % 3 == 0, (j + 1) % 3 == 0, (j + 2) % 3 == 0, 1.0 }
+            };
+        }
+    }
 
     addResource(&this->resource, "Entity", entityData, cleanupResources);
 }
@@ -81,21 +98,10 @@ void loadScreens(struct EngineCore *this) {
         .qData = 1,
         .camera = {
             .pos = { 0.0, 2.0, 4.0 },
-            .direction = { 0.0, -0.5, -1.0 }
+            .direction = { 0.0, -2.0, -4.0 }
         },
         .updateCameraBuffer = updateFirstPersonCameraBuffer,
     }, &this->graphics), destroyRenderPassObj);
-
-    struct instance *hex = ((struct Entity *)findResource(entityData, "hex"))->instance;
-    *hex = (struct instance){
-        .pos = { 0.0f, 0.0f, 0.0f },
-        .rotation = { 0.0f, 0.0f, 0.0f },
-        .fixedRotation = { glm_rad(90), 0.0f, 0.0f },
-        .scale = { 1, 1, 1 },
-        .textureIndex = 0,
-        .shadow = false,
-        .color = { 1.0, 1.0, 1.0, 1.0 }
-    };
 
     addResource(&this->resource, "ScreenData", screenData, cleanupResources);
 }

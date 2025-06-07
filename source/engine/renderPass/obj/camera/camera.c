@@ -66,6 +66,9 @@ void moveCamera(struct WindowManager *windowControl, struct camera *camera, floa
     if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_DOWN))
         theta += glm_rad(speed) * deltaTime;
 
+    if (glm_deg(theta) <  1) theta = glm_rad(1);
+    if (glm_deg(theta) > 179) theta = glm_rad(179);
+
     if ((KEY_PRESS | KEY_REPEAT) == getKeyState(windowControl, GLFW_KEY_W)) {
         camera->pos[0] += camera->direction[0] * 16.0f * deltaTime;
         camera->pos[1] += camera->direction[1] * 16.0f * deltaTime;
