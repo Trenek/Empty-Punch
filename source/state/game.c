@@ -41,11 +41,11 @@ void game(struct EngineCore *engine, enum state *state) {
         findResource(screenData, "Base Screen")
     };
 
-    struct Grip grip = {
+    struct Grip grip = createGrip((struct Grip){
         .hex = entity[0],
         .height = *(int *)findResource(sceneManagerData, "wysokosc"),
         .width = *(int *)findResource(sceneManagerData, "szerokosc"),
-    };
+    });
 
     struct player playerStr[2] = {
         {
@@ -89,4 +89,6 @@ void game(struct EngineCore *engine, enum state *state) {
         updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
         drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);
     }
+
+    freeGrip(grip);
 }

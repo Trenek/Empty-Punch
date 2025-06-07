@@ -1,13 +1,18 @@
 #include "state.h"
+#include <stdlib.h>
 
 typedef float vec3[3];
 
 struct Grip {
     struct Entity *hex;
 
+    float *array;
     int height;
     int width;
 };
+
+struct Grip createGrip(struct Grip a);
+void freeGrip(struct Grip a);
 
 struct player {
     struct Entity *model;
