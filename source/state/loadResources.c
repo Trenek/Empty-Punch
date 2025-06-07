@@ -72,6 +72,32 @@ static void addObjectLayout(struct EngineCore *this) {
         }), this->graphics.device), 
         destroyDescriptorSetLayout
     );
+    addResource(objectLayoutData, "anim", createDescriptorSetLayout(
+        createObjectDescriptorSetLayout(this->graphics.device, 3, (VkDescriptorSetLayoutBinding []) {
+            {
+                .binding = 0,
+                .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                .descriptorCount = 1,
+                .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+                .pImmutableSamplers = NULL
+            },
+            {
+                .binding = 1,
+                .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                .descriptorCount = 1,
+                .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+                .pImmutableSamplers = NULL
+            },
+            {
+                .binding = 2,
+                .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                .descriptorCount = 1,
+                .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+                .pImmutableSamplers = NULL
+            },
+        }), this->graphics.device), 
+        destroyDescriptorSetLayout
+    );
     addResource(objectLayoutData, "camera", 
         createDescriptorSetLayout(createCameraDescriptorSetLayout(this->graphics.device), this->graphics.device), 
         destroyDescriptorSetLayout
@@ -83,10 +109,12 @@ static void addObjectLayout(struct EngineCore *this) {
 static void createGraphicPipelines(struct EngineCore *this) {
     struct ResourceManager *graphicPipelinesData = calloc(1, sizeof(struct ResourceManager));
     struct ResourceManager *renderPassCoreData = findResource(&this->resource, "RenderPassCoreData");
+    struct ResourceManager *objectData = findResource(&this->resource, "objectLayout");
 
     struct Textures *colorTexture = findResource(findResource(&this->resource, "textures"), "Color");
-    struct descriptorSetLayout *objectLayout = findResource(findResource(&this->resource, "objectLayout"), "object");
-    struct descriptorSetLayout *cameraLayout = findResource(findResource(&this->resource, "objectLayout"), "camera");
+    struct descriptorSetLayout *objectLayout = findResource(objectData, "object");
+    struct descriptorSetLayout *animLayout = findResource(objectData, "anim");
+    struct descriptorSetLayout *cameraLayout = findResource(objectData, "camera");
 
     struct renderPassCore *renderPass[] = {
         findResource(renderPassCoreData, "Clean"),
@@ -105,6 +133,24 @@ static void createGraphicPipelines(struct EngineCore *this) {
 
         .texture = &colorTexture->descriptor,
         .objectLayout = objectLayout->descriptorSetLayout,
+
+        Vert(AnimVertex),
+        .operation = VK_COMPARE_OP_LESS,
+        .cullFlags = VK_CULL_MODE_BACK_BIT,
+
+        .cameraLayout = cameraLayout->descriptorSetLayout
+    }, &this->graphics), destroyObjGraphicsPipeline);
+    addResource(graphicPipelinesData, "Animated Model", createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
+        .qRenderPassCore = qRenderPass,
+        .renderPassCore = renderPass,
+        .vertexShader = "shaders/animation.spv",
+        .fragmentShader = "shaders/frag2.spv",
+        .minDepth = 0.0f,
+        .maxDepth = 1.0f,
+        .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+
+        .texture = &colorTexture->descriptor,
+        .objectLayout = animLayout->descriptorSetLayout,
 
         Vert(AnimVertex),
         .operation = VK_COMPARE_OP_LESS,
