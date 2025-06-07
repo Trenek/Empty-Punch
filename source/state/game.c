@@ -80,6 +80,8 @@ void game(struct EngineCore *engine, enum state *state) {
     
     moveCamera(&engine->window, &renderPass[0]->camera, engine->deltaTime.deltaTime);
 
+    playSound(&engine->soundManager, 0, true, 1.0f);
+
     while (*state == GAME && !shouldWindowClose(engine->window)) {
         glfwPollEvents();
 

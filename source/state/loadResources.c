@@ -20,7 +20,6 @@ static void addTextures(struct EngineCore *this) {
     addResource(textureManager, "Color", loadTextures(&this->graphics, 3, (const char *[]){
         "textures/hex_small.png",
         "textures/player1.png",
-        "textures/player.png",
         "textures/hex_cracked.png",
     }), unloadTextures);
     addResource(textureManager, "cubeMap", loadCubeMaps(&this->graphics, (const char *[]) {
@@ -231,7 +230,9 @@ static void createGraphicPipelines(struct EngineCore *this) {
     addResource(&this->resource, "graphicPipelines", graphicPipelinesData, cleanupResources);
 }
 
-static void loadSounds(struct EngineCore *) {}
+static void loadSounds(struct EngineCore *this) {
+    loadSound(&this->soundManager, 0, "music/EmptyMusic.mp3");
+}
 
 void loadResources(struct EngineCore *engine, enum state *state) {
     addTextures(engine);

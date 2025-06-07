@@ -22,11 +22,7 @@ void main() {
     const float g = fragColor[1];
     const float b = fragColor[2];
 
-    const vec3 color = vec3(
-        (r > 0.7 && g < 0.2) ? fragDressColor.xyz :
-        (r > 0.7 && g > 0.4 && g < 0.5) ? fragSkinColor.xyz :
-        fragColor
-    );
+    const vec3 color = fragColor;
     const vec3 lightColor = vec3(
         100.0 / 256.0, 200.0 / 256.0, 255.0 / 256.0
         //1.0, 1.0, 1.0
