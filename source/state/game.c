@@ -6,6 +6,7 @@
 #include <gsl/gsl_vector.h>
 
 #include "engineCore.h"
+#include "player.h"
 #include "state.h"
 
 #include "entity.h"
@@ -25,6 +26,7 @@ char (*(*(*returnArray(int n))[])())[50] {
 }
 
 void game(struct EngineCore *engine, enum state *state) {
+    struct ResourceManager *modelData = findResource(&engine->resource, "modelData");
     struct ResourceManager *entityData = findResource(&engine->resource, "Entity");
     struct ResourceManager *screenData = findResource(&engine->resource, "ScreenData");
 
@@ -46,6 +48,11 @@ void game(struct EngineCore *engine, enum state *state) {
         findResource(screenData, "Base Screen")
     };
 
+    struct player playerStr = {
+        .model = entity[1],
+        .actualModel = findResource(modelData, "player")
+    };
+
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
     
     struct instance *player = entity[1]->instance;
@@ -53,6 +60,7 @@ void game(struct EngineCore *engine, enum state *state) {
     while (*state == GAME && !shouldWindowClose(engine->window)) {
         glfwPollEvents();
 
+        posePlayer(&playerStr, engine->deltaTime.deltaTime);
         updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
 
         moveCamera(&engine->window, &renderPass[0]->camera, engine->deltaTime.deltaTime);

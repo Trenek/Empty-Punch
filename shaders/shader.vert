@@ -35,13 +35,29 @@ layout(push_constant) uniform constants {
 	int meshID;
 } PushConstants;
 
+layout(std140, set = 0, binding = 2) readonly buffer AnimBuffer{
+	mat4 transform[];
+} joint;
+
+vec4 applyBoneTransform(vec4 p) {
+    vec4 result = vec4(0.0);
+
+    for (int i = 0; i < 4; i += 1) {
+        result += joint.transform[inBoneIDs[i]] * (inWeights[i] * p);
+    }
+
+    return result;
+}
+
 void main() {
+    vec4 position = applyBoneTransform(vec4(inPosition, 1.0));
+
     gl_Position = (
         ubo.proj * 
         ubo.view * 
         instance.objects[gl_InstanceIndex].model * 
         mesh.localModel[PushConstants.meshID] * 
-        vec4(inPosition, 1.0)
+        position
     );
 
     fragColor = instance.objects[gl_InstanceIndex].color;
