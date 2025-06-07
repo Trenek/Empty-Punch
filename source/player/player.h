@@ -2,15 +2,21 @@
 
 typedef float vec3[3];
 
-struct player {
-    struct Entity *model;
+struct Grip {
     struct Entity *hex;
-    struct actualModel *actualModel;
-
-    int movements[4];
 
     int height;
     int width;
+};
+
+struct player {
+    struct Entity *model;
+    struct actualModel *actualModel;
+
+    struct Grip *grip;
+
+    int movements[4];
+
     int x;
     int y;
 

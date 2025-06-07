@@ -41,38 +41,40 @@ void game(struct EngineCore *engine, enum state *state) {
         findResource(screenData, "Base Screen")
     };
 
+    struct Grip grip = {
+        .hex = entity[0],
+        .height = *(int *)findResource(sceneManagerData, "wysokosc"),
+        .width = *(int *)findResource(sceneManagerData, "szerokosc"),
+    };
+
     struct player playerStr[2] = {
         {
             .model = entity[1],
             .actualModel = findResource(modelData, "player"),
-            .height = *(int *)findResource(sceneManagerData, "wysokosc"),
-            .width = *(int *)findResource(sceneManagerData, "szerokosc"),
-            .hex = entity[0],
+            .grip = &grip,
             .movements = {
                 GLFW_KEY_W,
                 GLFW_KEY_S,
                 GLFW_KEY_A,
                 GLFW_KEY_D
-            }
+            },
+            .x = 0,
+            .y = 0
         },
         {
             .model = entity[2],
+            .grip = &grip,
             .actualModel = findResource(modelData, "player"),
-            .height = *(int *)findResource(sceneManagerData, "wysokosc"),
-            .width = *(int *)findResource(sceneManagerData, "szerokosc"),
-            .hex = entity[0],
             .movements = {
                 GLFW_KEY_UP,
                 GLFW_KEY_DOWN,
                 GLFW_KEY_LEFT,
                 GLFW_KEY_RIGHT
-            }
+            },
+            .x = grip.width - 1,
+            .y = grip.height - 1
         }
     };
-    playerStr[0].x = playerStr[0].width / 2;
-    playerStr[0].y = playerStr[0].height / 2;
-    playerStr[1].x = playerStr[1].width / 2;
-    playerStr[1].y = playerStr[1].height / 2;
 
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
     

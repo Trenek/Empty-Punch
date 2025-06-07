@@ -14,7 +14,7 @@ void animate(struct Entity *model, struct actualModel *actualModel, size_t animI
 
 void movePlayer(struct player *p, struct WindowManager *window, enum state *state, float deltaTime) {
     struct instance *player = p->model->instance;
-    struct instance *hex = p->hex->instance;
+    struct instance *hex = p->grip->hex->instance;
 
     p->time += deltaTime;
 
@@ -23,12 +23,12 @@ void movePlayer(struct player *p, struct WindowManager *window, enum state *stat
     if ((KEY_PRESS | KEY_CHANGE) == getKeyState(window, p->movements[2])) p->x -= 1;
     if ((KEY_PRESS | KEY_CHANGE) == getKeyState(window, p->movements[3])) p->x += 1;
 
-    int index = p->x + p->width * p->y;
+    int index = p->x + p->grip->width * p->y;
 
     memcpy(player->pos, hex[index].pos, sizeof(float [3]));
 
-    if (p->x >= p->width - (1 == p->y % 2)) *state = EXIT;
-    if (p->y >= p->height) *state = EXIT;
+    if (p->x >= p->grip->width - (1 == p->y % 2)) *state = EXIT;
+    if (p->y >= p->grip->height) *state = EXIT;
     if (p->y < 0) *state = EXIT;
     if (p->x < 0) *state = EXIT;
         
