@@ -7,6 +7,7 @@ int main() {
     void (* const state[])(struct EngineCore *engine, enum state *state) = {
         [GAME] = game,
         [LOAD_GAME] = loadGame,
+        [MAIN_MENU] = menu,
         [LOAD_RESOURCES] = loadResources,
     };
     enum state stateID = LOAD_RESOURCES;
