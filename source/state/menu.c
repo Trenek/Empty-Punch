@@ -75,6 +75,7 @@ void menu(struct EngineCore *engine, enum state *state) {
     };
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
 
+    [[maybe_unused]]
     struct Button button = {
         .joystick = GLFW_JOYSTICK_1,
         .isClicked = false,
@@ -129,7 +130,7 @@ void menu(struct EngineCore *engine, enum state *state) {
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { 0.0f, 0.0f, 0.0f },
         .scale = { 0.1f, 0.05f, 0.1f },
-        .textureIndex = 0,
+        .textureIndex = 1,
         .shadow = false
     };
 
@@ -138,7 +139,7 @@ void menu(struct EngineCore *engine, enum state *state) {
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { 0.0f, 0.0f, 0.0f },
         .scale = { 0.1f, 0.05f, 0.1f },
-        .textureIndex = 0,
+        .textureIndex = 1,
         .shadow = false
     };
 
