@@ -47,7 +47,17 @@ static void addEntities(struct EngineCore *this) {
         INS(instance, instanceBuffer),
     }, &this->graphics), destroyEntity);
 
+    addResource(entityData, "player", createModel((struct ModelBuilder) {
+        .instanceCount = 1,
+        .modelData = findResource(modelData, "player"),
+        .objectLayout = objectLayout->descriptorSetLayout,
+
+        INS(instance, instanceBuffer),
+    }, &this->graphics), destroyEntity);
+
     struct instance *hex = ((struct Entity *)findResource(entityData, "hex"))->instance;
+    struct instance *player = ((struct Entity *)findResource(entityData, "player"))->instance;
+
     for (int j = 0; j < m; j += 1) {
         for (int i = 0; i < n; i += 1) {
             hex[j * n + i] = (struct instance){
@@ -57,10 +67,23 @@ static void addEntities(struct EngineCore *this) {
                 .scale = { 1, 1, 1 },
                 .textureIndex = 0,
                 .shadow = false,
-                .color = { j % 3 == 0, (j + 1) % 3 == 0, (j + 2) % 3 == 0, 1.0 }
+                .color = { 
+                    j % 3 == 0 ? 1.0 / (j + 1) : 1.0 / (i + 1), 
+                    (j + 1) % 3 == 0 ? 1.0 / (j + 1) : 1.0 / (i + 1), 
+                    (j + 2) % 3 == 0 ? 1.0 / (j + 1) : 1.0 / (i + 1), 
+                    1.0
+                }
             };
         }
     }
+    player[0] = (struct instance){
+        .pos = { 0.0f, 1.0f, 0.1f },
+        .rotation = { 0.0f, 0.0f, 0.0f },
+        .fixedRotation = { glm_rad(90), 0.0f, 0.0f },
+        .scale = { 1, 1, 1 },
+        .textureIndex = 1,
+        .shadow = false,
+    };
 
     addResource(&this->resource, "Entity", entityData, cleanupResources);
 }
@@ -90,9 +113,10 @@ void loadScreens(struct EngineCore *this) {
             {
                 .pipe = pipe[0],
                 .entity = (struct Entity* []) {
+                    findResource(entityData, "player"),
                     findResource(entityData, "hex"),
                 },
-                .qEntity = 1
+                .qEntity = 2
             },
         },
         .qData = 1,

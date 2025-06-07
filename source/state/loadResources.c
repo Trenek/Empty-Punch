@@ -17,8 +17,9 @@
 static void addTextures(struct EngineCore *this) {
     struct ResourceManager *textureManager = calloc(1, sizeof(struct ResourceManager));
 
-    addResource(textureManager, "Color", loadTextures(&this->graphics, 1, (const char *[]){
+    addResource(textureManager, "Color", loadTextures(&this->graphics, 2, (const char *[]){
         "textures/hex.png",
+        "textures/player.png",
     }), unloadTextures);
 
     addResource(&this->resource, "textures", textureManager, cleanupResources);
@@ -27,8 +28,7 @@ static void addTextures(struct EngineCore *this) {
 static void addModelData(struct EngineCore *this) {
     struct ResourceManager *modelData = calloc(1, sizeof(struct ResourceManager));
 
-    addResource(modelData, "sphere", loadModel("models/sphere.obj", &this->graphics), destroyActualModel);
-    addResource(modelData, "line", loadModel("models/cylinder.glb", &this->graphics), destroyActualModel);
+    addResource(modelData, "player", loadModel("models/player.glb", &this->graphics), destroyActualModel);
     addResource(modelData, "hex", loadModel("models/hex.glb", &this->graphics), destroyActualModel);
     addResource(modelData, "font", loadModel("fonts/c.ttf", &this->graphics), destroyActualModel);
 
