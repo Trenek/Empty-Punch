@@ -78,7 +78,7 @@ static void addEntities(struct EngineCore *this) {
                 .pos = { - i * sqrt(3) - sqrt(3) * (j % 2) / 2, 1.5f * j, 0.0f },
                 .rotation = { 0.0f, 0.0f, 0.0f },
                 .fixedRotation = { glm_rad(90), 0.0f, 0.0f },
-                .scale = { 1, 1, 1 },
+                .scale = { 0.8, 1, 0.8 },
                 .textureIndex = 0,
                 .shadow = false,
                 .color = { 

@@ -18,7 +18,7 @@ static void addTextures(struct EngineCore *this) {
     struct ResourceManager *textureManager = calloc(1, sizeof(struct ResourceManager));
 
     addResource(textureManager, "Color", loadTextures(&this->graphics, 2, (const char *[]){
-        "textures/hex.png",
+        "textures/hex_small.png",
         "textures/player.png",
     }), unloadTextures);
 
