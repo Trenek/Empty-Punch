@@ -10,6 +10,7 @@
 
 struct renderPassCore;
 struct EngineCore {
+    int time;
     struct WindowManager window;
     struct DeltaTimeManager deltaTime;
     struct SoundManager soundManager;

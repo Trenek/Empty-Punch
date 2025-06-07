@@ -11,6 +11,7 @@ enum state {
     PAUSE,
     WIN_SCREEN,
     LOSE,
+    END,
     EXIT
 };
 
@@ -21,5 +22,6 @@ void game(struct EngineCore *engine, enum state *state);
 void loadResources(struct EngineCore *engine, enum state *state);
 void loadGame(struct EngineCore *engine, enum state *state);
 void menu(struct EngineCore *engine, enum state *state);
+void end(struct EngineCore *engine, enum state *state);
 
 #endif
