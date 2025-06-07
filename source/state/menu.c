@@ -18,15 +18,8 @@
 #include "button.h"
 
 void menu(struct EngineCore *engine, enum state *state) {
-    struct ResourceManager *graphicsPipelineData = findResource(&engine->resource, "graphicPipelines");
     struct ResourceManager *entityData = findResource(&engine->resource, "Entity");
     struct ResourceManager *modelData = findResource(&engine->resource, "modelData");
-
-    struct graphicsPipeline *pipe[] = {
-        findResource(graphicsPipelineData, "Text"),
-        findResource(graphicsPipelineData, "Flat"),
-        findResource(graphicsPipelineData, "Skybox"),
-    };
 
     struct Entity *entity[] = {
         findResource(entityData, "Main Menu"),
@@ -39,6 +32,8 @@ void menu(struct EngineCore *engine, enum state *state) {
     size_t qEntity = sizeof(entity) / sizeof(struct Entity *);
 
     struct ResourceManager *renderPassCoreData = findResource(&engine->resource, "RenderPassCoreData");
+    struct ResourceManager *renderPassData = findResource(&engine->resource, "ScreenData");
+
     struct renderPassCore *renderPassArr[] = { 
         findResource(renderPassCoreData, "Clean"),
         findResource(renderPassCoreData, "Stay")
@@ -46,36 +41,8 @@ void menu(struct EngineCore *engine, enum state *state) {
     size_t qRenderPassArr = sizeof(renderPassArr) / sizeof(struct renderPassCore *);
 
     struct renderPassObj *renderPass[] = {
-        createRenderPassObj((struct renderPassBuilder){
-            .renderPass = renderPassArr[0],
-            .coordinates = { 0.0, 0.0, 1.0, 1.0 },
-            .data = (struct pipelineConnection[]) {
-                {
-                    .pipe = pipe[0],
-                    .entity = (struct Entity* []) {
-                        entity[0],
-                        entity[3],
-                        entity[4],
-                    },
-                    .qEntity = 3
-                },
-                {
-                    .pipe = pipe[1],
-                    .entity = (struct Entity* []) {
-                        entity[1],
-                        entity[5],
-                    },
-                    .qEntity = 2
-                },
-                {
-                    .pipe = pipe[2],
-                    .entity = &entity[2],
-                    .qEntity = 1
-                }
-            },
-            .qData = 3,
-            .updateCameraBuffer = updateFirstPersonCameraBuffer
-        }, &engine->graphics),
+        findResource(renderPassData, "Skybox"),
+        findResource(renderPassData, "Interface")
     };
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
 
@@ -88,7 +55,7 @@ void menu(struct EngineCore *engine, enum state *state) {
             entity[5],
         },
         .model = findResource(modelData, "flat"),
-        .camera = renderPass[0]->cameraBufferMapped[0],
+        .camera = renderPass[1]->cameraBufferMapped[0],
         .newState = (int []) {
             GAME,
             EXIT
@@ -165,6 +132,10 @@ void menu(struct EngineCore *engine, enum state *state) {
         .pos = { 0.0, 0.0, 0.0 },
         .direction = { 0.0, 1.0, 0.0 }
     };
+    renderPass[1]->camera = (struct camera) {
+        .pos = { 0.0, 0.0, 0.0 },
+        .direction = { 0.0, 1.0, 0.0 }
+    };
 
     while (MAIN_MENU == *state && !shouldWindowClose(engine->window)) {
         glfwPollEvents();
@@ -177,7 +148,4 @@ void menu(struct EngineCore *engine, enum state *state) {
             *state = button.newState[button.chosen];
         }
     }
-
-    vkDeviceWaitIdle(engine->graphics.device);
-    destroyRenderPassObjArr(qRenderPass, renderPass);
 }

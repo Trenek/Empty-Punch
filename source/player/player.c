@@ -47,10 +47,10 @@ void movePlayer(struct player *p, struct WindowManager *window, enum state *, fl
 
             player->pos[0] = - (p->x - (p->grip->width - 1) / 2.0) * sqrt(3) - sqrt(3) * (p->y % 2) / 2;
             player->pos[1] = 1.5f * (p->y - (p->grip->height - 1) / 2.0);
-            player->pos[2] -= 3 * deltaTime;
+            player->pos[2] -= 10 * deltaTime;
     }
     else if (hex[index].pos[2] < -10) {
-        player->pos[2] -= 3 * deltaTime;
+        player->pos[2] -= 10 * deltaTime;
     }
     else {
         if ((KEY_PRESS | KEY_CHANGE) == getKeyState(window, p->movements[0])) p->y -= 1;

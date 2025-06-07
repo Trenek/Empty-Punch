@@ -24,7 +24,8 @@ void game(struct EngineCore *engine, enum state *state) {
     struct Entity *entity[] = {
         findResource(entityData, "hex"),
         findResource(entityData, "player 1"),
-        findResource(entityData, "player 2")
+        findResource(entityData, "player 2"),
+        findResource(entityData, "Background"),
     };
 
     size_t qEntity = sizeof(entity) / sizeof(struct Entity *);
@@ -38,8 +39,10 @@ void game(struct EngineCore *engine, enum state *state) {
     size_t qRenderPassArr = sizeof(renderPassArr) / sizeof(struct renderPassCore *);
 
     struct renderPassObj *renderPass[] = {
+        findResource(screenData, "Skybox"),
         findResource(screenData, "Base Screen")
     };
+    size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
 
     struct Grip grip = createGrip((struct Grip){
         .hex = entity[0],
@@ -76,9 +79,12 @@ void game(struct EngineCore *engine, enum state *state) {
         }
     };
 
-    size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
-    
-    moveCamera(&engine->window, &renderPass[0]->camera, engine->deltaTime.deltaTime);
+    struct instance *adam[] = {
+        playerStr[0].model->instance,
+        playerStr[1].model->instance
+    };
+
+    moveCamera(&engine->window, &renderPass[1]->camera, engine->deltaTime.deltaTime);
 
     playSound(&engine->soundManager, 0, true, 1.0f);
 
@@ -87,6 +93,14 @@ void game(struct EngineCore *engine, enum state *state) {
 
         movePlayer(&playerStr[0], &engine->window, state, engine->deltaTime.deltaTime, engine);
         movePlayer(&playerStr[1], &engine->window, state, engine->deltaTime.deltaTime, engine);
+        movePlayer(&playerStr[0], &engine->window, state, engine->deltaTime.deltaTime);
+        movePlayer(&playerStr[1], &engine->window, state, engine->deltaTime.deltaTime);
+        if (adam[0]->pos[2] < -10) {
+            *state = EXIT;
+        }
+        else if (adam[1]->pos[2] < -10) {
+            *state = EXIT;
+        }
 
         updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
         drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);
