@@ -5,10 +5,12 @@ typedef float vec3[3];
 struct player {
     struct Entity *model;
     struct Entity *hex;
-    int height;
-    int width;
     struct actualModel *actualModel;
 
+    int movements[4];
+
+    int height;
+    int width;
     int x;
     int y;
 
@@ -33,4 +35,4 @@ enum animation {
 };
 
 struct WindowManager;
-void movePlayer(struct player *p, struct WindowManager *window, float deltaTime);
+void movePlayer(struct player *p, struct WindowManager *window, enum state *state, float deltaTime);

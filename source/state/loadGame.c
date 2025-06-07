@@ -63,7 +63,14 @@ static void addEntities(struct EngineCore *this) {
         INS(instance, instanceBuffer),
     }, &this->graphics), destroyEntity);
 
-    addResource(entityData, "player", createModel((struct ModelBuilder) {
+    addResource(entityData, "player 1", createModel((struct ModelBuilder) {
+        .instanceCount = 1,
+        .modelData = findResource(modelData, "player"),
+        .objectLayout = animLayout->descriptorSetLayout,
+
+        INS(instance, instanceBuffer),
+    }, &this->graphics), destroyEntity);
+    addResource(entityData, "player 2", createModel((struct ModelBuilder) {
         .instanceCount = 1,
         .modelData = findResource(modelData, "player"),
         .objectLayout = animLayout->descriptorSetLayout,
@@ -96,7 +103,8 @@ static void addEntities(struct EngineCore *this) {
     addString(entityData, modelData, objectLayout, this, "Exit", "Exit");
 
     struct instance *hex = ((struct Entity *)findResource(entityData, "hex"))->instance;
-    struct instance *player = ((struct Entity *)findResource(entityData, "player"))->instance;
+    struct instance *player = ((struct Entity *)findResource(entityData, "player 1"))->instance;
+    struct instance *player2 = ((struct Entity *)findResource(entityData, "player 2"))->instance;
 
     for (int j = 0; j < m; j += 1) {
         for (int i = 0; i < (n - (j % 2)); i += 1) {
@@ -121,6 +129,14 @@ static void addEntities(struct EngineCore *this) {
         }
     }
     player[0] = (struct instance){
+        .pos = { 0.0f, 0.0f, 0.0f },
+        .rotation = { 0.0f, 0.0f, 0.0f },
+        .fixedRotation = { glm_rad(90), glm_rad(180), 0.0f },
+        .scale = { 3 * 10e-2, 3 * 10e-2, 3 * 10e-2 },
+        .textureIndex = 1,
+        .shadow = false,
+    };
+    player2[0] = (struct instance){
         .pos = { 0.0f, 0.0f, 0.0f },
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { glm_rad(90), glm_rad(180), 0.0f },
@@ -165,9 +181,10 @@ void loadScreens(struct EngineCore *this) {
             {
                 .pipe = pipe[2],
                 .entity = (struct Entity* []) {
-                    findResource(entityData, "player"),
+                    findResource(entityData, "player 1"),
+                    findResource(entityData, "player 2"),
                 },
-                .qEntity = 1
+                .qEntity = 2
             },
         },
         .qData = 2,
