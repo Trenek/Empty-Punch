@@ -47,6 +47,8 @@ void game(struct EngineCore *engine, enum state *state) {
     };
 
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
+    
+    struct instance *player = entity[1]->instance;
 
     while (*state == GAME && !shouldWindowClose(engine->window)) {
         glfwPollEvents();
@@ -54,6 +56,11 @@ void game(struct EngineCore *engine, enum state *state) {
         updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
 
         moveCamera(&engine->window, &renderPass[0]->camera, engine->deltaTime.deltaTime);
+        
+        if ((KEY_PRESS | KEY_REPEAT) == getKeyState(&engine->window, GLFW_KEY_T)) player[0].pos[1] -= 0.01;
+        if ((KEY_PRESS | KEY_REPEAT) == getKeyState(&engine->window, GLFW_KEY_G)) player[0].pos[1] += 0.01;
+        if ((KEY_PRESS | KEY_REPEAT) == getKeyState(&engine->window, GLFW_KEY_F)) player[0].pos[0] += 0.01;
+        if ((KEY_PRESS | KEY_REPEAT) == getKeyState(&engine->window, GLFW_KEY_H)) player[0].pos[0] -= 0.01;
 
         drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);
     }
