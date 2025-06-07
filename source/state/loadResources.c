@@ -19,7 +19,7 @@ static void addTextures(struct EngineCore *this) {
 
     addResource(textureManager, "Color", loadTextures(&this->graphics, 2, (const char *[]){
         "textures/hex_small.png",
-        "textures/player.png",
+        "textures/player1.png",
     }), unloadTextures);
     addResource(textureManager, "cubeMap", loadCubeMaps(&this->graphics, (const char *[]) {
         "textures/CubeMap_purple/xpos.png",
