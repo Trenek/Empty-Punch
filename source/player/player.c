@@ -2,6 +2,8 @@
 
 #include "player.h"
 #include "entity.h"
+#include "soundManager.h"
+#include "engineCore.h"
 
 #include "instanceBuffer.h"
 #include "windowManager.h"
@@ -26,7 +28,7 @@ void freeGrip(struct Grip a) {
     free(a.array);
 }
 
-void movePlayer(struct player *p, struct WindowManager *window, enum state *, float deltaTime) {
+void movePlayer(struct player *p, struct WindowManager *window, enum state *, float deltaTime, struct EngineCore *engine) {
     struct instance *player = p->model->instance;
     struct instance *hex = p->grip->hex->instance;
 
@@ -37,9 +39,15 @@ void movePlayer(struct player *p, struct WindowManager *window, enum state *, fl
         (p->y >= p->grip->height) ||
         (p->y < 0) ||
         (p->x < 0)) {
-        player->pos[0] = - (p->x - (p->grip->width - 1) / 2.0) * sqrt(3) - sqrt(3) * (p->y % 2) / 2;
-        player->pos[1] = 1.5f * (p->y - (p->grip->height - 1) / 2.0);
-        player->pos[2] -= 3 * deltaTime;
+
+            if(!p->isDead){
+                p->isDead = true;
+                playSound(&engine->soundManager, 1, false, 1.0f);
+            }
+
+            player->pos[0] = - (p->x - (p->grip->width - 1) / 2.0) * sqrt(3) - sqrt(3) * (p->y % 2) / 2;
+            player->pos[1] = 1.5f * (p->y - (p->grip->height - 1) / 2.0);
+            player->pos[2] -= 3 * deltaTime;
     }
     else if (hex[index].pos[2] < -10) {
         player->pos[2] -= 3 * deltaTime;
@@ -54,9 +62,11 @@ void movePlayer(struct player *p, struct WindowManager *window, enum state *, fl
         p->grip->array[index] -= deltaTime;
         if (p->grip->array[index] < 0) {
             hex[index].pos[2] = -100;
+            playSound(&engine->soundManager, 3, false, 1.0f);
         }
         else if (p->grip->array[index] < 1) {
             hex[index].textureInc = 2;
+            playSound(&engine->soundManager, 2, false, 1.0f);
         }
 
     }

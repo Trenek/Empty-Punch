@@ -232,6 +232,9 @@ static void createGraphicPipelines(struct EngineCore *this) {
 
 static void loadSounds(struct EngineCore *this) {
     loadSound(&this->soundManager, 0, "music/EmptyMusic.mp3");
+    loadSound(&this->soundManager, 1, "music/longfall.mp3");
+    loadSound(&this->soundManager, 2, "music/crack.mp3");
+    loadSound(&this->soundManager, 3, "music/hex_gone.mp3");
 }
 
 void loadResources(struct EngineCore *engine, enum state *state) {

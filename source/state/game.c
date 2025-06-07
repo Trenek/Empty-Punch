@@ -85,8 +85,8 @@ void game(struct EngineCore *engine, enum state *state) {
     while (*state == GAME && !shouldWindowClose(engine->window)) {
         glfwPollEvents();
 
-        movePlayer(&playerStr[0], &engine->window, state, engine->deltaTime.deltaTime);
-        movePlayer(&playerStr[1], &engine->window, state, engine->deltaTime.deltaTime);
+        movePlayer(&playerStr[0], &engine->window, state, engine->deltaTime.deltaTime, engine);
+        movePlayer(&playerStr[1], &engine->window, state, engine->deltaTime.deltaTime, engine);
 
         updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
         drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);

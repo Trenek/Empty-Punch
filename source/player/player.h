@@ -17,6 +17,7 @@ void freeGrip(struct Grip a);
 struct player {
     struct Entity *model;
     struct actualModel *actualModel;
+    bool isDead;
 
     struct Grip *grip;
 
@@ -46,4 +47,4 @@ enum animation {
 };
 
 struct WindowManager;
-void movePlayer(struct player *p, struct WindowManager *window, enum state *state, float deltaTime);
+void movePlayer(struct player *p, struct WindowManager *window, enum state *state, float deltaTime, struct EngineCore *engine);
