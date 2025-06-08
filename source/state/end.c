@@ -1,26 +1,12 @@
-#include <cglm.h>
-#include <string.h>
-
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_vector.h>
-
 #include "engineCore.h"
-#include "player.h"
 #include "state.h"
 
 #include "renderPassObj.h"
 
-#define g 9.81
-
 float genRand(float x) {
     float result = (double)rand() / (double)RAND_MAX;
 
-    if (result + x > 1.0) {
-        result = 1.0 - x - 0.1;
-    }
-
-    return result;
+    return (result + x > 1.0) ? 1.0 - x - 0.1 : result;
 }
 
 void end(struct EngineCore *engine, enum state *state) {
@@ -36,30 +22,18 @@ void end(struct EngineCore *engine, enum state *state) {
             .renderPass = renderPassArr[1],
             .color = { 0.0, 0.0, 0.0, 1.0 },
             .coordinates = { 0.0, 0.0, 1.0, 1.0 },
-            .camera = {
-                .pos = { 0.0, 10.0, 20.0 },
-                .direction = { 0.0, -10.0, -20.0 }
-            },
             .updateCameraBuffer = updateFirstPersonCameraBuffer,
         }, &engine->graphics),
         createRenderPassObj((struct renderPassBuilder){
             .renderPass = renderPassArr[0],
             .color = { 0.0, 0.0, 0.0, 1.0 },
             .coordinates = { 0.0, 0.0, 0.1, 0.1 },
-            .camera = {
-                .pos = { 0.0, 10.0, 20.0 },
-              .direction = { 0.0, -10.0, -20.0 }
-            },
             .updateCameraBuffer = updateFirstPersonCameraBuffer,
         }, &engine->graphics),
         createRenderPassObj((struct renderPassBuilder){
             .renderPass = renderPassArr[1],
             .color = { 0.0, 0.0, 0.0, 1.0 },
             .coordinates = { 0.0, 0.0, 1.0, 1.0 },
-            .camera = {
-                .pos = { 0.0, 10.0, 20.0 },
-                .direction = { 0.0, -10.0, -20.0 }
-            },
             .updateCameraBuffer = updateFirstPersonCameraBuffer,
         }, &engine->graphics)
     };

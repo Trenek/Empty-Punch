@@ -128,15 +128,7 @@ static void addEntities(struct EngineCore *this) {
             };
         }
     }
-    player[0] = (struct instance){
-        .pos = { 0.0f, 0.0f, 0.0f },
-        .rotation = { 0.0f, 0.0f, 0.0f },
-        .fixedRotation = { glm_rad(90), glm_rad(180), 0.0f },
-        .scale = { 3 * 10e-2, 3 * 10e-2, 3 * 10e-2 },
-        .textureIndex = 1,
-        .shadow = false,
-    };
-    player2[0] = (struct instance){
+    player[0] = player2[0] = (struct instance){
         .pos = { 0.0f, 0.0f, 0.0f },
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { glm_rad(90), glm_rad(180), 0.0f },

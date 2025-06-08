@@ -35,11 +35,14 @@ void loadSound(struct SoundManager *this, size_t soundIndex, const char *soundNa
     MY_ASSERT(MA_SUCCESS == ma_sound_init_from_file(this->engine, soundName, 0, NULL, NULL, this->sound[soundIndex]));
 }
 
+void stopPrevSound(struct SoundManager *this) {
+    if (this->prevSound != NULL) {
+        ma_sound_stop(this->prevSound);
+        ma_sound_seek_to_pcm_frame(this->prevSound, 0);
+    }
+}
+
 void playSound(struct SoundManager *this, size_t soundIndex, bool shouldLoop, float volume) {
-    // if (this->prevSound != NULL) {
-    //     ma_sound_stop(this->prevSound);
-    //     ma_sound_seek_to_pcm_frame(this->prevSound, 0);
-    // } // lmao
     ma_sound_start(this->sound[soundIndex]);
     ma_sound_set_volume(this->sound[soundIndex], volume);
     ma_sound_set_looping(this->sound[soundIndex], shouldLoop);
