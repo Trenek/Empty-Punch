@@ -16,7 +16,7 @@ struct ResourceManager {
 
 void addResource(struct ResourceManager *this, const char *name, void *mem, void (*cleanup)(void *));
 void cleanupResource(struct ResourceManager *this, const char *name);
-void cleanupResourcesOrg(struct ResourceManager *this);
-void cleanupResources(void *this);
+void cleanupResourceManagerOrg(struct ResourceManager *this);
+void cleanupResourceManager(void *this);
 
 void *findResource(struct ResourceManager *this, const char *resource);

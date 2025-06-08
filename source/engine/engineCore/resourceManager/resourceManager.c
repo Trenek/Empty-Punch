@@ -42,7 +42,7 @@ void cleanupResource(struct ResourceManager *this, const char *name) {
     }
 }
 
-void cleanupResourcesOrg(struct ResourceManager *this) {
+void cleanupResourceManagerOrg(struct ResourceManager *this) {
     for (size_t i = 0; i < this->qResources; i += 1) {
         if (this->resources[i].cleanup) {
             this->resources[i].cleanup(this->resources[i].this);
@@ -53,8 +53,8 @@ void cleanupResourcesOrg(struct ResourceManager *this) {
     free(this->resources);
 }
 
-void cleanupResources(void *this) {
-    cleanupResourcesOrg(this);
+void cleanupResourceManager(void *this) {
+    cleanupResourceManagerOrg(this);
 
     free(this);
 }

@@ -31,7 +31,7 @@ static void addTextures(struct EngineCore *this) {
         "textures/CubeMap_purple/zneg.png",
     }), unloadTextures);
 
-    addResource(&this->resource, "textures", textureManager, cleanupResources);
+    addResource(&this->resource, "textures", textureManager, cleanupResourceManager);
 }
 
 static void addModelData(struct EngineCore *this) {
@@ -43,7 +43,7 @@ static void addModelData(struct EngineCore *this) {
     addResource(modelData, "flat", loadModel("models/my_model2d.obj", &this->graphics), destroyActualModel);
     addResource(modelData, "skyBox", loadModel("models/my_skybox.obj", &this->graphics), destroyActualModel);
 
-    addResource(&this->resource, "modelData", modelData, cleanupResources);
+    addResource(&this->resource, "modelData", modelData, cleanupResourceManager);
 }
 
 static void addRenderPassCoreData(struct EngineCore *this) {
@@ -58,7 +58,7 @@ static void addRenderPassCoreData(struct EngineCore *this) {
         .initLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     }, &this->graphics), freeRenderPassCore);
 
-    addResource(&this->resource, "RenderPassCoreData", renderPassCoreData, cleanupResources);
+    addResource(&this->resource, "RenderPassCoreData", renderPassCoreData, cleanupResourceManager);
 }
 
 static void addObjectLayout(struct EngineCore *this) {
@@ -114,7 +114,7 @@ static void addObjectLayout(struct EngineCore *this) {
         destroyDescriptorSetLayout
     );
 
-    addResource(&this->resource, "objectLayout", objectLayoutData, cleanupResources);
+    addResource(&this->resource, "objectLayout", objectLayoutData, cleanupResourceManager);
 }
 
 static void createGraphicPipelines(struct EngineCore *this) {
@@ -227,7 +227,7 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .cameraLayout = cameraLayout->descriptorSetLayout
     }, &this->graphics), destroyObjGraphicsPipeline);
 
-    addResource(&this->resource, "graphicPipelines", graphicPipelinesData, cleanupResources);
+    addResource(&this->resource, "graphicPipelines", graphicPipelinesData, cleanupResourceManager);
 }
 
 static void loadSounds(struct EngineCore *this) {

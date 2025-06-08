@@ -20,7 +20,7 @@ void loadScene(struct EngineCore *this) {
     *(int *)findResource(entityData, "wysokosc") = 11;
     *(int *)findResource(entityData, "szerokosc") = 11;
 
-    addResource(&this->resource, "scena", entityData, cleanupResources);
+    addResource(&this->resource, "scena", entityData, cleanupResourceManager);
 }
 
 void addString(
@@ -137,7 +137,7 @@ static void addEntities(struct EngineCore *this) {
         .shadow = false,
     };
 
-    addResource(&this->resource, "Entity", entityData, cleanupResources);
+    addResource(&this->resource, "Entity", entityData, cleanupResourceManager);
 }
 
 void loadScreens(struct EngineCore *this) {
@@ -236,7 +236,7 @@ void loadScreens(struct EngineCore *this) {
         .updateCameraBuffer = updateFirstPersonCameraBuffer
     }, &this->graphics), destroyRenderPassObj),
 
-    addResource(&this->resource, "ScreenData", screenData, cleanupResources);
+    addResource(&this->resource, "ScreenData", screenData, cleanupResourceManager);
 }
 
 void loadGame(struct EngineCore *engine, enum state *state) {

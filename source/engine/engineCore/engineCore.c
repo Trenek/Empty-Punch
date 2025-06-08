@@ -34,7 +34,7 @@ struct EngineCore setup(const char *name) {
 
 void cleanup(struct EngineCore vulkan) {
     vkDeviceWaitIdle(vulkan.graphics.device);
-    cleanupResourcesOrg(&vulkan.resource);
+    cleanupResourceManager(&vulkan.resource);
 
     cleanupGraphics(vulkan.graphics);
     cleanupSoundManager(vulkan.soundManager);
