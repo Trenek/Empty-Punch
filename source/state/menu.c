@@ -10,7 +10,6 @@
 #include "entity.h"
 #include "instanceBuffer.h"
 
-#include "graphicsPipelineObj.h"
 #include "renderPassObj.h"
 
 #include "player.h"

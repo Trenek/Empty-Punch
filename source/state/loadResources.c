@@ -109,8 +109,16 @@ static void addObjectLayout(struct EngineCore *this) {
         }), this->graphics.device), 
         destroyDescriptorSetLayout
     );
-    addResource(objectLayoutData, "camera", 
-        createDescriptorSetLayout(createCameraDescriptorSetLayout(this->graphics.device), this->graphics.device), 
+    addResource(objectLayoutData, "camera", createDescriptorSetLayout(
+        createObjectDescriptorSetLayout(this->graphics.device, 1, (VkDescriptorSetLayoutBinding []) {
+            {
+                .binding = 0,
+                .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                .descriptorCount = 1,
+                .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+                .pImmutableSamplers = NULL
+            }
+        }), this->graphics.device),
         destroyDescriptorSetLayout
     );
 
@@ -146,12 +154,12 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
         .texture = &colorTexture->descriptor,
-        .objectLayout = objectLayout->descriptorSetLayout,
 
         Vert(AnimVertex),
         .operation = VK_COMPARE_OP_LESS,
         .cullFlags = VK_CULL_MODE_BACK_BIT,
 
+        .objectLayout = objectLayout->descriptorSetLayout,
         .cameraLayout = cameraLayout->descriptorSetLayout
     }, &this->graphics), destroyObjGraphicsPipeline);
     addResource(graphicPipelinesData, "Animated Model", createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
@@ -164,12 +172,12 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
         .texture = &colorTexture->descriptor,
-        .objectLayout = animLayout->descriptorSetLayout,
 
         Vert(AnimVertex),
         .operation = VK_COMPARE_OP_LESS,
         .cullFlags = VK_CULL_MODE_BACK_BIT,
 
+        .objectLayout = animLayout->descriptorSetLayout,
         .cameraLayout = cameraLayout->descriptorSetLayout
     }, &this->graphics), destroyObjGraphicsPipeline);
     addResource(graphicPipelinesData, "Text", createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
@@ -182,12 +190,12 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
         .texture = &colorTexture->descriptor,
-        .objectLayout = objectLayout->descriptorSetLayout,
 
         Vert(FontVertex),
         .operation = VK_COMPARE_OP_LESS,
         .cullFlags = VK_CULL_MODE_BACK_BIT,
 
+        .objectLayout = objectLayout->descriptorSetLayout,
         .cameraLayout = cameraLayout->descriptorSetLayout
     }, &this->graphics), destroyObjGraphicsPipeline);
     addResource(graphicPipelinesData, "Flat", createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
@@ -197,17 +205,17 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .fragmentShader = "shaders/frag2d.spv",
         .minDepth = 0.0f,
         .maxDepth = 1.0f,
-        .texture = &colorTexture->descriptor,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
-        .objectLayout = objectLayout->descriptorSetLayout,
+        .texture = &colorTexture->descriptor,
 
         Vert(AnimVertex),
         .operation = VK_COMPARE_OP_LESS,
         .cullFlags = VK_CULL_MODE_NONE,
 
+        .objectLayout = objectLayout->descriptorSetLayout,
         .cameraLayout = cameraLayout->descriptorSetLayout
-    }, &this->graphics), destroyObjGraphicsPipeline);
+        }, &this->graphics), destroyObjGraphicsPipeline);
     addResource(graphicPipelinesData, "Skybox", createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
         .qRenderPassCore = qRenderPass,
         .renderPassCore = renderPass,
@@ -215,15 +223,15 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .fragmentShader = "shaders/skyboxF.spv",
         .minDepth = 0.0f,
         .maxDepth = 1.0f,
-        .texture = &cubeMap->descriptor,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
-        .objectLayout = objectLayout->descriptorSetLayout,
+        .texture = &cubeMap->descriptor,
 
         Vert(AnimVertex),
         .operation = VK_COMPARE_OP_LESS_OR_EQUAL,
         .cullFlags = VK_CULL_MODE_BACK_BIT,
 
+        .objectLayout = objectLayout->descriptorSetLayout,
         .cameraLayout = cameraLayout->descriptorSetLayout
     }, &this->graphics), destroyObjGraphicsPipeline);
 
@@ -231,14 +239,11 @@ static void createGraphicPipelines(struct EngineCore *this) {
 }
 
 static void loadSounds(struct EngineCore *this) {
-
     loadSound(&this->soundManager, 4, "music/tile_break_fall.mp3");
     loadSound(&this->soundManager, 3, "music/hex_gone.mp3");
     loadSound(&this->soundManager, 2, "music/crack.mp3");
     loadSound(&this->soundManager, 1, "music/longfall.mp3");
     loadSound(&this->soundManager, 0, "music/EmptyMusic.mp3");
-
-    
 }
 
 void loadResources(struct EngineCore *engine, enum state *state) {

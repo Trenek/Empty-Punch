@@ -1,10 +1,6 @@
 #include <cglm.h>
 #include <string.h>
 
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_vector.h>
-
 #include "engineCore.h"
 #include "player.h"
 #include "state.h"
