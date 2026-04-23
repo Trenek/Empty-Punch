@@ -1,14 +1,13 @@
-#include <cglm.h>
+#include <cglm/cglm.h>
 #include <string.h>
 
-#include "camera.h"
+#include "defaultCamera.h"
 
 #include "engineCore.h"
 #include "state.h"
 
-#include "asset.h"
 #include "entity.h"
-#include "instanceBuffer.h"
+#include "shadowInstance.h"
 
 #include "renderPassObj.h"
 
@@ -17,31 +16,30 @@
 #include "button.h"
 
 void menu(struct EngineCore *engine, enum state *state) {
-    struct ResourceManager *entityData = findResource(&engine->resource, "Entity");
-    struct ResourceManager *modelData = findResource(&engine->resource, "modelData");
+    struct ResourceManager *entityData = findResource(&engine->resource, ENTITY);
+    struct ResourceManager *modelData = findResource(&engine->resource, MODELS);
+    struct ResourceManager *renderPassCoreData = findResource(&engine->resource, RENDER_PASS_CORE);
+    struct ResourceManager *renderPassData = findResource(&engine->resource, SCREEN_DATA);
 
     struct Entity *entity[] = {
-        findResource(entityData, "Main Menu"),
-        findResource(entityData, "Flat 1"),
-        findResource(entityData, "Background"),
-        findResource(entityData, "Play"),
-        findResource(entityData, "Exit"),
-        findResource(entityData, "Flat 2"),
+        findResource(entityData, ENTITY_TEXT_MAIN_MENU),
+        findResource(entityData, ENTITY_FLAT_1),
+        findResource(entityData, ENTITY_BACKGROUND),
+        findResource(entityData, ENTITY_TEXT_PLAY),
+        findResource(entityData, ENTITY_TEXT_EXIT),
+        findResource(entityData, ENTITY_FLAT_2),
     };
     size_t qEntity = sizeof(entity) / sizeof(struct Entity *);
 
-    struct ResourceManager *renderPassCoreData = findResource(&engine->resource, "RenderPassCoreData");
-    struct ResourceManager *renderPassData = findResource(&engine->resource, "ScreenData");
-
     struct renderPassCore *renderPassArr[] = { 
-        findResource(renderPassCoreData, "Clean"),
-        findResource(renderPassCoreData, "Stay")
+        findResource(renderPassCoreData, RENDER_PASS_CLEAN),
+        findResource(renderPassCoreData, RENDER_PASS_STAY)
     };
     size_t qRenderPassArr = sizeof(renderPassArr) / sizeof(struct renderPassCore *);
 
     struct renderPassObj *renderPass[] = {
-        findResource(renderPassData, "Skybox"),
-        findResource(renderPassData, "Interface")
+        findResource(renderPassData, SCREEN_SKYBOX),
+        findResource(renderPassData, SCREEN_INTERFACE)
     };
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
 
@@ -53,8 +51,8 @@ void menu(struct EngineCore *engine, enum state *state) {
             entity[1],
             entity[5],
         },
-        .model = findResource(modelData, "flat"),
-        .camera = renderPass[1]->cameraBufferMapped[0],
+        .model = findResource(modelData, MODEL_FLAT),
+        .camera = renderPass[1]->cameraBuffer.buffersMapped[0],
         .newState = (int []) {
             GAME,
             EXIT
@@ -62,45 +60,45 @@ void menu(struct EngineCore *engine, enum state *state) {
         .chosen = 0,
     };
 
-    struct instance *text = entity[0]->instance;
-    struct instance *flat[] = {
+    struct shadowInstance *text = entity[0]->instance;
+    struct shadowInstance *flat[] = {
         entity[1]->instance,
         entity[5]->instance,
     };
-    struct instance *background = entity[2]->instance;
-    struct instance *buttonText[] = {
+    struct shadowInstance *background = entity[2]->instance;
+    struct shadowInstance *buttonText[] = {
         entity[3]->instance,
         entity[4]->instance
     };
 
-    text[0] = (struct instance){
+    text[0] = (struct shadowInstance){
         .pos = { 0.0f, 0.3f, 0.0f },
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { 0.0f, 0.0f, 0.0f },
-        .scale = { 4 * 10e-3, 4 * 10e-3, 4 * 10e-3 },
+        .scale = { 6 * 10e-7, 6 * 10e-7, 6 * 10e-7 },
         .textureIndex = 0,
         .shadow = false
     };
 
-    buttonText[0][0] = (struct instance){
+    buttonText[0][0] = (struct shadowInstance){
         .pos = { 0.0f, -0.014f, 0.0f },
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { 0.0f, 0.0f, 0.0f },
-        .scale = { 3 * 10e-3, 3 * 10e-3, 3 * 10e-3 },
+        .scale = { 4 * 10e-7, 4 * 10e-7, 4 * 10e-7 },
         .textureIndex = 0,
         .shadow = false
     };
 
-    buttonText[1][0] = (struct instance){
+    buttonText[1][0] = (struct shadowInstance){
         .pos = { 0.0f, -0.11f -0.014f, 0.0f },
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { 0.0f, 0.0f, 0.0f },
-        .scale = { 3 * 10e-3, 3 * 10e-3, 3 * 10e-3 },
+        .scale = { 4 * 10e-7, 4 * 10e-7, 4 * 10e-7 },
         .textureIndex = 0,
         .shadow = false
     };
 
-    flat[0][0] = (struct instance){
+    flat[0][0] = (struct shadowInstance){
         .pos = { 0.0f, 0.0f, 0.0f },
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { 0.0f, 0.0f, 0.0f },
@@ -109,7 +107,7 @@ void menu(struct EngineCore *engine, enum state *state) {
         .shadow = false
     };
 
-    flat[1][0] = (struct instance){
+    flat[1][0] = (struct shadowInstance){
         .pos = { 0.0f, -0.11f, 0.0f },
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { 0.0f, 0.0f, 0.0f },
@@ -118,7 +116,7 @@ void menu(struct EngineCore *engine, enum state *state) {
         .shadow = false
     };
 
-    background[0] = (struct instance){
+    background[0] = (struct shadowInstance){
         .pos = { 0.0f, 0.0f, 0.0f }, 
         .rotation = { 0.0f, glm_rad(0.3), 0.0f },
         .fixedRotation = { glm_rad(90), 0.0f, 0.0f },
@@ -127,11 +125,11 @@ void menu(struct EngineCore *engine, enum state *state) {
         .shadow = false
     };
 
-    renderPass[0]->camera = (struct camera) {
+    *(struct FirstPerson *)renderPass[0]->camera = (struct FirstPerson) {
         .pos = { 0.0, 0.0, 0.0 },
         .direction = { 0.0, 1.0, 0.0 }
     };
-    renderPass[1]->camera = (struct camera) {
+    *(struct FirstPerson *)renderPass[1]->camera = (struct FirstPerson) {
         .pos = { 0.0, 0.0, 0.0 },
         .direction = { 0.0, 1.0, 0.0 }
     };
@@ -139,7 +137,7 @@ void menu(struct EngineCore *engine, enum state *state) {
     while (MAIN_MENU == *state && !shouldWindowClose(engine->window)) {
         glfwPollEvents();
 
-        updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
+        updateShadowInstances(entity, qEntity, engine->deltaTime.deltaTime);
 
         drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);
         shadowButton(engine->graphics, engine->window, &button);

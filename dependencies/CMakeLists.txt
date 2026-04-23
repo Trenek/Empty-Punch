@@ -1,10 +1,12 @@
 add_subdirectory(tREngine EXCLUDE_FROM_ALL)
+add_subdirectory(miniaudio EXCLUDE_FROM_ALL)
 
 set(INCLUDE_DIRECTORIES
 )
 
 set(LINK_LIBRARIES
     tREngine
+    miniaudio
 )
 
 set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} PARENT_SCOPE)

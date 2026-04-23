@@ -2,12 +2,11 @@
 
 #include "player.h"
 #include "entity.h"
-#include "soundManager.h"
+#include "sound.h"
 #include "engineCore.h"
 
-#include "instanceBuffer.h"
+#include "shadowInstance.h"
 #include "windowManager.h"
-#include "actualModel.h"
 
 bool checkForColisionToAdd(struct player *p, const char *name, vec3 toAdd);
 bool checkForColision(struct player *p, const char *name);
@@ -29,8 +28,9 @@ void freeGrip(struct Grip a) {
 }
 
 void movePlayer(struct player *p, struct WindowManager *window, enum state *, float deltaTime, struct EngineCore *engine) {
-    struct instance *player = p->model->instance;
-    struct instance *hex = p->grip->hex->instance;
+    struct SoundManager *soundManager = findResource(&engine->resource, SOUND_MANAGER);
+    struct shadowInstance *player = p->model->instance;
+    struct shadowInstance *hex = p->grip->hex->instance;
 
     p->time += deltaTime;
 
@@ -42,7 +42,7 @@ void movePlayer(struct player *p, struct WindowManager *window, enum state *, fl
 
             if(!p->isDead){
                 p->isDead = true;
-                playSound(&engine->soundManager, 1, false, 1.0f);
+                playSound(soundManager, 1, false, 1.0f);
             }
 
             player->pos[0] = - (p->x - (p->grip->width - 1) / 2.0) * sqrt(3) - sqrt(3) * (p->y % 2) / 2;
@@ -62,11 +62,11 @@ void movePlayer(struct player *p, struct WindowManager *window, enum state *, fl
         p->grip->array[index] -= deltaTime;
         if (p->grip->array[index] < 0) {
             hex[index].pos[2] = -100;
-            playSound(&engine->soundManager,4, false, 1.0f);
+            playSound(soundManager,4, false, 1.0f);
         }
         else if (p->grip->array[index] < 1) {
             hex[index].textureInc = 2;
-            playSound(&engine->soundManager, p->isDead ? 4 : 2, false, 1.0f);
+            playSound(soundManager, p->isDead ? 4 : 2, false, 1.0f);
             
         }
 

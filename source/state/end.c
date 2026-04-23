@@ -1,6 +1,10 @@
+#include <stdlib.h>
+
+#include "camera.h"
 #include "engineCore.h"
 #include "state.h"
 
+#include "descriptor.h"
 #include "renderPassObj.h"
 
 float genRand(float x) {
@@ -10,31 +14,45 @@ float genRand(float x) {
 }
 
 void end(struct EngineCore *engine, enum state *state) {
-    struct ResourceManager *renderPassCoreData = findResource(&engine->resource, "RenderPassCoreData");
+    struct ResourceManager *renderPassCoreData = findResource(&engine->resource, RENDER_PASS_CORE);
     struct renderPassCore *renderPassArr[] = { 
-        findResource(renderPassCoreData, "Clean"),
-        findResource(renderPassCoreData, "Stay")
+        findResource(renderPassCoreData, RENDER_PASS_CLEAN),
+        findResource(renderPassCoreData, RENDER_PASS_STAY)
     };
     size_t qRenderPassArr = sizeof(renderPassArr) / sizeof(struct renderPassCore *);
+
+    struct descriptorSetLayout *cameraLayout = findResource(findResource(&engine->resource, OBJECT_LAYOUT), OBJECT_LAYOUT_CAMERA);
 
     struct renderPassObj *renderPass[] = {
         createRenderPassObj((struct renderPassBuilder){
             .renderPass = renderPassArr[1],
             .color = { 0.0, 0.0, 0.0, 1.0 },
             .coordinates = { 0.0, 0.0, 1.0, 1.0 },
-            .updateCameraBuffer = updateFirstPersonCameraBuffer,
+            .updateCameraBuffer = myUpdateFirstPersonCameraBuffer,
+            .cameraSize = sizeof(struct camera),
+            .cameraBufferSize = sizeof(struct CameraBuffer),
+            .camera = &(struct camera){},
+            .cameraDescriptorSetLayout = cameraLayout->descriptorSetLayout,
         }, &engine->graphics),
         createRenderPassObj((struct renderPassBuilder){
             .renderPass = renderPassArr[0],
             .color = { 0.0, 0.0, 0.0, 1.0 },
             .coordinates = { 0.0, 0.0, 0.1, 0.1 },
-            .updateCameraBuffer = updateFirstPersonCameraBuffer,
+            .updateCameraBuffer = myUpdateFirstPersonCameraBuffer,
+            .cameraSize = sizeof(struct camera),
+            .cameraBufferSize = sizeof(struct CameraBuffer),
+            .camera = &(struct camera){},
+            .cameraDescriptorSetLayout = cameraLayout->descriptorSetLayout,
         }, &engine->graphics),
         createRenderPassObj((struct renderPassBuilder){
             .renderPass = renderPassArr[1],
             .color = { 0.0, 0.0, 0.0, 1.0 },
             .coordinates = { 0.0, 0.0, 1.0, 1.0 },
-            .updateCameraBuffer = updateFirstPersonCameraBuffer,
+            .updateCameraBuffer = myUpdateFirstPersonCameraBuffer,
+            .cameraSize = sizeof(struct camera),
+            .cameraBufferSize = sizeof(struct CameraBuffer),
+            .camera = &(struct camera){},
+            .cameraDescriptorSetLayout = cameraLayout->descriptorSetLayout,
         }, &engine->graphics)
     };
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);

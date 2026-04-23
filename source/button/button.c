@@ -1,20 +1,22 @@
-#include <cglm.h>
+#include <cglm/cglm.h>
 #include <GLFW/glfw3.h>
 
 #include "button.h"
+#include "defaultCamera.h"
 
 #include "graphicsSetup.h"
 #include "windowManager.h"
 
 #include "entity.h"
-#include "actualModel.h"
-#include "cameraBufferObject.h"
-#include "instanceBuffer.h"
+#include "shadowInstance.h"
 
 #include "Vertex.h"
 
 #define MAX(x, y) ((x) > (y) ? (x) : (y)) 
 #define MIN(x, y) ((y) > (x) ? (x) : (y))
+
+#define MAX_4(x, y, z, h, i) MAX(MAX(x[i], y[i]), MAX(z[i], h[i])) 
+#define MIN_4(x, y, z, h, i) MIN(MIN(x[i], y[i]), MIN(z[i], h[i]))
 
 static void normalShadowButton(struct GraphicsSetup gs, struct WindowManager wm, struct Button *button) {
     vec3 p; {
@@ -26,26 +28,31 @@ static void normalShadowButton(struct GraphicsSetup gs, struct WindowManager wm,
         p[1] = 2 * pp[1] / gs.swapChain.extent.height - 1;
     }
 
-    struct AnimVertex *temp = button->model->mesh[0].vertices;
+    vec3 temp[4] = {
+        { -1.0f, -1.0f, 0.0f },
+        { 1.0f, 1.0f, 0.0f },
+        { -1.0f, 1.0f, 0.0f },
+        { 1.0f, -1.0f, 0.0f },
+    };
 
     button->chosen = -1;
     for (int i = 0; i < button->qButton; i += 1) {
         vec3 temp2[4]; {
             mat4 tempMat; {
-                glm_mat4_mul(button->camera->proj, ((struct instanceBuffer *)button->entity[i]->buffer[0])->modelMatrix, tempMat);
+                glm_mat4_mul(button->camera->proj, ((struct shadowInstanceBuffer *)button->entity[i]->buffer[0])->modelMatrix, tempMat);
             }
-            glm_mat4_mulv3(tempMat, temp[0].pos, 1, temp2[0]);
-            glm_mat4_mulv3(tempMat, temp[1].pos, 1, temp2[1]);
-            glm_mat4_mulv3(tempMat, temp[2].pos, 1, temp2[2]);
-            glm_mat4_mulv3(tempMat, temp[3].pos, 1, temp2[3]);
+            glm_mat4_mulv3(tempMat, temp[0], 1, temp2[0]);
+            glm_mat4_mulv3(tempMat, temp[1], 1, temp2[1]);
+            glm_mat4_mulv3(tempMat, temp[2], 1, temp2[2]);
+            glm_mat4_mulv3(tempMat, temp[3], 1, temp2[3]);
         }
 
-        float left = MIN(MIN(temp2[0][0], temp2[1][0]), MIN(temp2[2][0], temp2[3][0]));
-        float right = MAX(MAX(temp2[0][0], temp2[1][0]), MAX(temp2[2][0], temp2[3][0]));
-        float down = MIN(MIN(temp2[0][1], temp2[1][1]), MIN(temp2[2][1], temp2[3][1]));
-        float up = MAX(MAX(temp2[0][1], temp2[1][1]), MAX(temp2[2][1], temp2[3][1]));
+        float left = MIN_4(temp2[0], temp2[1], temp2[2], temp2[3], 0);
+        float right = MAX_4(temp2[0], temp2[1], temp2[2], temp2[3], 0);
+        float down = MIN_4(temp2[0], temp2[1], temp2[2], temp2[3], 1);
+        float up = MAX_4(temp2[0], temp2[1], temp2[2], temp2[3], 1);
 
-        if (((struct instance *)button->entity[i]->instance)->shadow = p[0] > left && p[0] < right && p[1] > down && p[1] < up) {
+        if (((struct shadowInstance *)button->entity[i]->instance)->shadow = p[0] > left && p[0] < right && p[1] > down && p[1] < up) {
             button->chosen = i;
         }
     }
@@ -76,10 +83,10 @@ void gamepadShadowButton(struct WindowManager wm, struct Button *button) {
         if (button->chosen >= button->qButton) button->chosen = 0;
 
         for (int i = 0; i < button->qButton; i += 1) {
-            ((struct instance *)button->entity[i]->instance)->shadow = 0;
+            ((struct shadowInstance *)button->entity[i]->instance)->shadow = 0;
         }
 
-        ((struct instance *)button->entity[button->chosen]->instance)->shadow = 1;
+        ((struct shadowInstance *)button->entity[button->chosen]->instance)->shadow = 1;
 
         button->isClicked = JP(GLFW_GAMEPAD_BUTTON_A);
 

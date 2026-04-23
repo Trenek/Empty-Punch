@@ -1,55 +1,57 @@
-#include <cglm.h>
+#include <cglm/cglm.h>
 #include <string.h>
 
+#include "sound.h"
 #include "engineCore.h"
 #include "player.h"
 #include "state.h"
+#include "camera.h"
 
 #include "entity.h"
-#include "instanceBuffer.h"
+#include "shadowInstance.h"
 
 #include "renderPassObj.h"
 
 #define g 9.81
 
 void game(struct EngineCore *engine, enum state *state) {
-    struct ResourceManager *modelData = findResource(&engine->resource, "modelData");
-    struct ResourceManager *entityData = findResource(&engine->resource, "Entity");
-    struct ResourceManager *screenData = findResource(&engine->resource, "ScreenData");
+    struct ResourceManager *modelData = findResource(&engine->resource, MODELS);
+    struct ResourceManager *entityData = findResource(&engine->resource, ENTITY);
+    struct ResourceManager *screenData = findResource(&engine->resource, SCREEN_DATA);
+    struct ResourceManager *renderPassCoreData = findResource(&engine->resource, RENDER_PASS_CORE);
+    struct ResourceManager *sceneManagerData = findResource(&engine->resource, SCENE_INFO);
 
     struct Entity *entity[] = {
-        findResource(entityData, "hex"),
-        findResource(entityData, "player 1"),
-        findResource(entityData, "player 2"),
-        findResource(entityData, "Background"),
+        findResource(entityData, ENTITY_HEX),
+        findResource(entityData, ENTITY_PLAYER_1),
+        findResource(entityData, ENTITY_PLAYER_2),
+        findResource(entityData, ENTITY_BACKGROUND),
     };
 
     size_t qEntity = sizeof(entity) / sizeof(struct Entity *);
 
-    struct ResourceManager *renderPassCoreData = findResource(&engine->resource, "RenderPassCoreData");
-    struct ResourceManager *sceneManagerData = findResource(&engine->resource, "scena");
     struct renderPassCore *renderPassArr[] = { 
-        findResource(renderPassCoreData, "Clean"),
-        findResource(renderPassCoreData, "Stay")
+        findResource(renderPassCoreData, RENDER_PASS_CLEAN),
+        findResource(renderPassCoreData, RENDER_PASS_STAY)
     };
     size_t qRenderPassArr = sizeof(renderPassArr) / sizeof(struct renderPassCore *);
 
     struct renderPassObj *renderPass[] = {
-        findResource(screenData, "Skybox"),
-        findResource(screenData, "Base Screen")
+        findResource(screenData, SCREEN_SKYBOX),
+        findResource(screenData, SCREEN_BASE),
     };
     size_t qRenderPass = sizeof(renderPass) / sizeof(struct renderPassObj *);
 
     struct Grip grip = createGrip((struct Grip){
         .hex = entity[0],
-        .height = *(int *)findResource(sceneManagerData, "wysokosc"),
-        .width = *(int *)findResource(sceneManagerData, "szerokosc"),
+        .height = *(int *)findResource(sceneManagerData, SCENE_HEIGHT),
+        .width = *(int *)findResource(sceneManagerData, SCENE_WIDTH),
     });
 
     struct player playerStr[2] = {
         {
             .model = entity[1],
-            .actualModel = findResource(modelData, "player"),
+            .actualModel = findResource(modelData, MODEL_PLAYER),
             .grip = &grip,
             .movements = {
                 GLFW_KEY_W,
@@ -63,7 +65,7 @@ void game(struct EngineCore *engine, enum state *state) {
         {
             .model = entity[2],
             .grip = &grip,
-            .actualModel = findResource(modelData, "player"),
+            .actualModel = findResource(modelData, MODEL_PLAYER),
             .movements = {
                 GLFW_KEY_UP,
                 GLFW_KEY_DOWN,
@@ -75,14 +77,15 @@ void game(struct EngineCore *engine, enum state *state) {
         }
     };
 
-    struct instance *adam[] = {
+    struct shadowInstance *adam[] = {
         playerStr[0].model->instance,
         playerStr[1].model->instance
     };
 
-    moveCamera(&engine->window, &renderPass[1]->camera, engine->deltaTime.deltaTime);
+    moveCamera(&engine->window, renderPass[0]->camera, engine->deltaTime.deltaTime);
+    moveCamera(&engine->window, renderPass[1]->camera, engine->deltaTime.deltaTime);
 
-    playSound(&engine->soundManager, 0, true, 1.0f);
+    playSound(findResource(&engine->resource, SOUND_MANAGER), 0, true, 1.0f);
 
     while (*state == GAME && !shouldWindowClose(engine->window)) {
         glfwPollEvents();
@@ -98,7 +101,7 @@ void game(struct EngineCore *engine, enum state *state) {
             *state = END;
         }
 
-        updateInstances(entity, qEntity, engine->deltaTime.deltaTime);
+        updateShadowInstances(entity, qEntity, engine->deltaTime.deltaTime);
         drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);
     }
 

@@ -1,3 +1,6 @@
 [submodule "dependencies/tREngine"]
 	path = dependencies/tREngine
 	url = https://github.com/Trenek/tREngine
+[submodule "dependencies/miniaudio"]
+	path = dependencies/miniaudio
+	url = https://github.com/mackron/miniaudio

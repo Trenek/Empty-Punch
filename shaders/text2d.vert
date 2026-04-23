@@ -10,7 +10,7 @@ layout(location = 1) out vec2 fragBezzier;
 layout(location = 2) out flat uint fragInOut;
 layout(location = 3) out flat uint shadow;
 
-layout(set = 2, binding = 0) readonly uniform UniformBufferObject {
+layout(set = 1, binding = 0) readonly uniform UniformBufferObject {
     mat4 view;
     mat4 proj;
 } ubo;
@@ -19,6 +19,7 @@ struct ObjectData {
     uint index;
     mat4 model;
     bool shadow;
+    vec4 color;
 };
 
 layout(std140, set = 0, binding = 0) readonly buffer ObjectBuffer{

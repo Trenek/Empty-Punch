@@ -3,3 +3,4 @@ build/
 .DS_Store
 .blend1
 .vscode/
+neovim.json
