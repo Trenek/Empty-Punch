@@ -103,7 +103,7 @@ void menu(struct EngineCore *engine, enum state *state) {
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { 0.0f, 0.0f, 0.0f },
         .scale = { 0.1f, 0.05f, 0.1f },
-        .textureIndex = 1,
+        .textureIndex = 3,
         .shadow = false
     };
 
@@ -112,7 +112,7 @@ void menu(struct EngineCore *engine, enum state *state) {
         .rotation = { 0.0f, 0.0f, 0.0f },
         .fixedRotation = { 0.0f, 0.0f, 0.0f },
         .scale = { 0.1f, 0.05f, 0.1f },
-        .textureIndex = 1,
+        .textureIndex = 3,
         .shadow = false
     };
 

@@ -16,7 +16,7 @@ void shadowInstanceUpdater(void *instancePtr, void *instanceBufferPtr, uint32_t 
         glm_rotate(instanceBuffer[i].modelMatrix, instance[i].fixedRotation[1] + time * instance[i].rotation[1], (vec3) { 0, 1, 0 });
         glm_rotate(instanceBuffer[i].modelMatrix, instance[i].fixedRotation[2] + time * instance[i].rotation[2], (vec3) { 0, 0, 1 });
         glm_scale(instanceBuffer[i].modelMatrix, instance[i].scale);
-        instanceBuffer[i].textureIndex = instance[i].textureIndex;
+        instanceBuffer[i].textureIndex = instance[i].textureIndex + instance[i].textureInc;
         instanceBuffer[i].shadow = instance[i].shadow;
     }
 }

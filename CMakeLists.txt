@@ -72,6 +72,7 @@ set(SHADER_DST "${CMAKE_BINARY_DIR}/shaders")
 add_custom_command(TARGET shaders POST_BUILD
     COMMAND glslc ${SHADER_SRC}/shader.vert -o ${SHADER_DST}/vert.spv
     COMMAND glslc ${SHADER_SRC}/shader.frag -o ${SHADER_DST}/frag.spv
+    COMMAND glslc ${SHADER_SRC}/player.frag -o ${SHADER_DST}/pFrag.spv
     COMMAND glslc ${SHADER_SRC}/text2d.vert -o ${SHADER_DST}/text2dV.spv
     COMMAND glslc ${SHADER_SRC}/text.frag -o ${SHADER_DST}/textF.spv
     COMMAND glslc ${SHADER_SRC}/shader2d.vert -o ${SHADER_DST}/vert2d.spv

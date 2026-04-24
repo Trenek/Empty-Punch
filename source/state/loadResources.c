@@ -26,10 +26,11 @@
 static void addTextures(struct EngineCore *this) {
     struct ResourceManager *textureManager = calloc(1, sizeof(struct ResourceManager));
 
-    addResource(textureManager, TEXTURE_COLOR, loadTextures(&this->graphics, 3, (struct TextureData[]){
+    addResource(textureManager, TEXTURE_COLOR, loadTextures(&this->graphics, 4, (struct TextureData[]){
         { .data = "textures/hex_small.png" },
         { .data = "textures/player1.png" },
         { .data = "textures/hex_cracked.png" },
+        { .data = "textures/floor2.png" },
     }), unloadTextures);
     addResource(textureManager, TEXTURE_CUBEMAP, loadCubeMaps(&this->graphics, (const char *[]) {
         "textures/CubeMap_purple/xpos.png",
@@ -210,7 +211,7 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .qRenderPassCore = qRenderPass,
         .renderPassCore = renderPass,
         .vertexShader = "shaders/vert.spv",
-        .fragmentShader = "shaders/frag.spv",
+        .fragmentShader = "shaders/pFrag.spv",
         .minDepth = 0.0f,
         .maxDepth = 1.0f,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
