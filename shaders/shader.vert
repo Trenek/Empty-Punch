@@ -16,7 +16,7 @@ layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out flat uint fragTexIndex;
 layout(location = 3) out flat uint shadow;
 
-layout(set = 2, binding = 0) readonly uniform UniformBufferObject {
+layout(set = 0, binding = 0) readonly uniform UniformBufferObject {
     mat4 view;
     mat4 proj;
 } ubo;
@@ -40,15 +40,15 @@ struct NodeData {
     int c;
 };
 
-layout(std140, set = 0, binding = 0) readonly buffer ObjectBuffer{
+layout(std140, set = 2, binding = 0) readonly buffer ObjectBuffer{
 	ObjectData objects[];
 } instance;
 
-layout(std140, set = 0, binding = 1) readonly buffer MeshBuffer{
+layout(std140, set = 2, binding = 1) readonly buffer MeshBuffer{
 	mat4 localModel[];
 } mesh;
 
-layout(std140, set = 0, binding = 2) readonly buffer AnimBuffer{
+layout(std140, set = 2, binding = 2) readonly buffer AnimBuffer{
 	NodeData transform[];
 } joint;
 

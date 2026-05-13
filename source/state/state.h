@@ -26,6 +26,7 @@ enum resourceEnum {
     SCENE_INFO,
     ENTITY,
     SCREEN_DATA,
+    COMMAND_QUEUE,
 
     TEXTURE_COLOR = 0,
     TEXTURE_CUBEMAP,
@@ -71,7 +72,9 @@ enum resourceEnum {
 
     SCREEN_BASE = 0,
     SCREEN_SKYBOX,
-    SCREEN_INTERFACE
+    SCREEN_INTERFACE,
+
+    COMMAND_QUEUE_GRAPHICS = 0,
 };
 
 struct EngineCore;

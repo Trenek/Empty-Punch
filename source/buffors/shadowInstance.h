@@ -3,10 +3,7 @@
 
 #include <cglm/cglm.h>
 
-#define INS(x, y) \
-    .instanceSize = sizeof(struct x), \
-    .instanceBufferSize = sizeof(struct y), \
-    .instanceUpdater = x##Updater
+#include "instanceBuilder.h"
 
 struct shadowInstanceBuffer {
     uint32_t textureIndex;
@@ -27,4 +24,12 @@ struct shadowInstance {
 struct Entity;
 void updateShadowInstances(struct Entity **model, size_t qModel, float deltaTime);
 void shadowInstanceUpdater(void *instancePtr, void *instanceBufferPtr, uint32_t instanceCount, float deltaTime);
+
+static inline struct instanceBuilder shadowInstanceInfo() {
+    return (struct instanceBuilder) {
+        .size = sizeof(struct shadowInstance),
+        .bufferSize = sizeof(struct shadowInstanceBuffer),
+        .updater = shadowInstanceUpdater,
+    };
+}
 #endif

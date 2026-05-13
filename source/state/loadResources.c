@@ -20,8 +20,7 @@
 
 #include "graphicsPipelineObj.h"
 #include "graphicsPipelineLayout.h"
-
-#include "Vertex.h"
+#include "descriptorSetLayoutObj.h"
 
 static void addTextures(struct EngineCore *this) {
     struct ResourceManager *textureManager = calloc(1, sizeof(struct ResourceManager));
@@ -115,9 +114,9 @@ static void createGraphicPipelineLayouts(struct EngineCore *this) {
 
     addResource(graphicPipelinesData, GRAPHICS_PIPELINE_LAYOUT_OBJ_CUBEMAP, createGraphicPipelineLayout((struct graphicsPipelineLayoutBuilder) {
         .descriptorSetLayout = (VkDescriptorSetLayout []){
-            objectLayout->descriptorSetLayout,
-            cubeMap->descriptor.descriptorSetLayout,
             cameraLayout->descriptorSetLayout,
+            cubeMap->descriptor.descriptorSetLayout,
+            objectLayout->descriptorSetLayout,
         },
         .qDescriptorSetLayout = 3,
 
@@ -128,13 +127,14 @@ static void createGraphicPipelineLayouts(struct EngineCore *this) {
                 .size = sizeof(struct ObjPushConstants),
                 .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT
             }
-        }
-    }, &this->graphics), destroyObjGraphicsPipelineLayout);
+        },
+        .debugName = "Cubemap"
+    }, &this->graphics), destroyPipelineLayoutObj);
     addResource(graphicPipelinesData, GRAPHICS_PIPELINE_LAYOUT_GLTF, createGraphicPipelineLayout((struct graphicsPipelineLayoutBuilder) {
         .descriptorSetLayout = (VkDescriptorSetLayout []){
-            gltfLayout->descriptorSetLayout,
-            colorTexture->descriptor.descriptorSetLayout,
             cameraLayout->descriptorSetLayout,
+            colorTexture->descriptor.descriptorSetLayout,
+            gltfLayout->descriptorSetLayout,
         },
         .qDescriptorSetLayout = 3,
 
@@ -145,20 +145,22 @@ static void createGraphicPipelineLayouts(struct EngineCore *this) {
                 .size = sizeof(struct GltfPushConstants),
                 .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT
             }
-        }
-    }, &this->graphics), destroyObjGraphicsPipelineLayout);
+        },
+        .debugName = "glTF"
+    }, &this->graphics), destroyPipelineLayoutObj);
     addResource(graphicPipelinesData, GRAPHICS_PIPELINE_LAYOUT_REC, createGraphicPipelineLayout((struct graphicsPipelineLayoutBuilder) {
         .descriptorSetLayout = (VkDescriptorSetLayout []){
-            recLayout->descriptorSetLayout,
-            colorTexture->descriptor.descriptorSetLayout,
             cameraLayout->descriptorSetLayout,
+            colorTexture->descriptor.descriptorSetLayout,
+            recLayout->descriptorSetLayout,
         },
         .qDescriptorSetLayout = 3,
-    }, &this->graphics), destroyObjGraphicsPipelineLayout);
+        .debugName = "rectangle",
+    }, &this->graphics), destroyPipelineLayoutObj);
     addResource(graphicPipelinesData, GRAPHICS_PIPELINE_LAYOUT_FONT, createGraphicPipelineLayout((struct graphicsPipelineLayoutBuilder) {
         .descriptorSetLayout = (VkDescriptorSetLayout []){
-            fontLayout->descriptorSetLayout,
             cameraLayout->descriptorSetLayout,
+            fontLayout->descriptorSetLayout,
         },
         .qDescriptorSetLayout = 2,
 
@@ -169,8 +171,9 @@ static void createGraphicPipelineLayouts(struct EngineCore *this) {
                 .size = sizeof(struct FontPushConstants),
                 .stageFlags = VK_SHADER_STAGE_VERTEX_BIT
             }
-        }
-    }, &this->graphics), destroyObjGraphicsPipelineLayout);
+        },
+        .debugName = "font",
+    }, &this->graphics), destroyPipelineLayoutObj);
 
     addResource(&this->resource, GRAPHIC_PIPELINE_LAYOUTS, graphicPipelinesData, cleanupResourceManager);
 }
@@ -191,7 +194,7 @@ static void createGraphicPipelines(struct EngineCore *this) {
     struct graphicsPipelineLayout *recLayout = findResource(graphicPipelineLayout, GRAPHICS_PIPELINE_LAYOUT_REC);
     struct graphicsPipelineLayout *cubeMapLayout = findResource(graphicPipelineLayout, GRAPHICS_PIPELINE_LAYOUT_OBJ_CUBEMAP);
 
-    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_FLOOR, createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
+    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_FLOOR, createGraphicsPipelineObj((struct GraphicsPipelineBuilder) {
         .pipelineLayout = gltfLayout->pipelineLayout,
         .qRenderPassCore = qRenderPass,
         .renderPassCore = renderPass,
@@ -201,12 +204,14 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .maxDepth = 1.0f,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
-        Vert(GltfVertex),
+        .vert = defaultGltfVert(),
         .operation = VK_COMPARE_OP_LESS,
         .cullFlags = VK_CULL_MODE_BACK_BIT,
-    }, &this->graphics), destroyObjGraphicsPipeline);
 
-    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_ANIM, createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
+        .debugName = "Floor"
+    }, &this->graphics), destroyPipelineObj);
+
+    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_ANIM, createGraphicsPipelineObj((struct GraphicsPipelineBuilder) {
         .pipelineLayout = gltfLayout->pipelineLayout,
         .qRenderPassCore = qRenderPass,
         .renderPassCore = renderPass,
@@ -216,12 +221,14 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .maxDepth = 1.0f,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
-        Vert(GltfVertex),
+        .vert = defaultGltfVert(),
         .operation = VK_COMPARE_OP_LESS,
         .cullFlags = VK_CULL_MODE_BACK_BIT,
-    }, &this->graphics), destroyObjGraphicsPipeline);
 
-    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_TEXT, createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
+        .debugName = "Anim"
+    }, &this->graphics), destroyPipelineObj);
+
+    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_TEXT, createGraphicsPipelineObj((struct GraphicsPipelineBuilder) {
         .pipelineLayout = fontLayout->pipelineLayout,
         .qRenderPassCore = qRenderPass,
         .renderPassCore = renderPass,
@@ -231,12 +238,14 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .maxDepth = 1.0f,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
-        Vert(FontVertex),
+        .vert = defaultFontVert(),
         .operation = VK_COMPARE_OP_LESS,
         .cullFlags = VK_CULL_MODE_BACK_BIT,
-    }, &this->graphics), destroyObjGraphicsPipeline);
 
-    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_BUTTON, createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
+        .debugName = "Text"
+    }, &this->graphics), destroyPipelineObj);
+
+    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_BUTTON, createGraphicsPipelineObj((struct GraphicsPipelineBuilder) {
         .pipelineLayout = recLayout->pipelineLayout,
         .qRenderPassCore = qRenderPass,
         .renderPassCore = renderPass,
@@ -246,12 +255,14 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .maxDepth = 1.0f,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
-        Vert(RecVertex),
+        .vert = defaultRectVert(),
         .operation = VK_COMPARE_OP_LESS,
         .cullFlags = VK_CULL_MODE_NONE,
-    }, &this->graphics), destroyObjGraphicsPipeline);
 
-    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_SKYBOX, createObjGraphicsPipeline((struct graphicsPipelineBuilder) {
+        .debugName = "Button"
+    }, &this->graphics), destroyPipelineObj);
+
+    addResource(graphicPipelinesData, GRAPHIC_PIPELINE_SKYBOX, createGraphicsPipelineObj((struct GraphicsPipelineBuilder) {
         .pipelineLayout = cubeMapLayout->pipelineLayout,
         .qRenderPassCore = qRenderPass,
         .renderPassCore = renderPass,
@@ -261,10 +272,12 @@ static void createGraphicPipelines(struct EngineCore *this) {
         .maxDepth = 1.0f,
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 
-        Vert(ObjVertex),
+        .vert = defaultObjVert(),
         .operation = VK_COMPARE_OP_LESS_OR_EQUAL,
         .cullFlags = VK_CULL_MODE_BACK_BIT,
-    }, &this->graphics), destroyObjGraphicsPipeline);
+
+        .debugName = "Skybox",
+    }, &this->graphics), destroyPipelineObj);
 
     addResource(&this->resource, GRAPHIC_PIPELINES, graphicPipelinesData, cleanupResourceManager);
 }

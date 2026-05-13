@@ -6,6 +6,7 @@
 #include "player.h"
 #include "state.h"
 #include "camera.h"
+#include "commandQueue.h"
 
 #include "entity.h"
 #include "shadowInstance.h"
@@ -20,6 +21,7 @@ void game(struct EngineCore *engine, enum state *state) {
     struct ResourceManager *screenData = findResource(&engine->resource, SCREEN_DATA);
     struct ResourceManager *renderPassCoreData = findResource(&engine->resource, RENDER_PASS_CORE);
     struct ResourceManager *sceneManagerData = findResource(&engine->resource, SCENE_INFO);
+    struct ResourceManager *commandQueue = findResource(&engine->resource, COMMAND_QUEUE);
 
     struct Entity *entity[] = {
         findResource(entityData, ENTITY_HEX),
@@ -82,6 +84,12 @@ void game(struct EngineCore *engine, enum state *state) {
         playerStr[1].model->instance
     };
 
+    struct CommandQueue *graphics = findResource(commandQueue, COMMAND_QUEUE_GRAPHICS);
+    struct CommandQueue *queue[] = {
+        graphics,
+    };
+    size_t qQueue = sizeof(queue) / sizeof(struct CommandQueue *);
+
     moveCamera(&engine->window, renderPass[0]->camera, engine->deltaTime.deltaTime);
     moveCamera(&engine->window, renderPass[1]->camera, engine->deltaTime.deltaTime);
 
@@ -102,7 +110,20 @@ void game(struct EngineCore *engine, enum state *state) {
         }
 
         updateShadowInstances(entity, qEntity, engine->deltaTime.deltaTime);
-        drawFrame(engine, qRenderPass, renderPass, qRenderPassArr, renderPassArr);
+        engineUpdate(engine, qRenderPass, renderPass);
+        
+        aquireNextImage(engine, graphics->inFlightFence, graphics->semaphore);
+
+        queueDraw(graphics, engine, qRenderPass, renderPass, 1, 
+            (VkSemaphore []) {
+                graphics->semaphore[engine->currentFrame],
+            },
+            (VkPipelineStageFlags []) {
+                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            }
+        );
+
+        presentFrame(engine, qRenderPassArr, renderPassArr, qQueue, queue);
     }
 
     freeGrip(grip);

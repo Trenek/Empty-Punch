@@ -8,7 +8,7 @@ layout(location = 0) out vec4 outColor;
 
 layout(set = 1, binding = 0) uniform samplerCube skybox;
 
-layout(set = 2, binding = 0) readonly uniform UniformBufferObject {
+layout(set = 0, binding = 0) readonly uniform UniformBufferObject {
     mat4 view;
     mat4 proj;
 
@@ -51,7 +51,7 @@ struct Materials {
     int pad1;
 };
 
-layout(std140, set = 0, binding = 1) readonly buffer ObjectBuffer{
+layout(std140, set = 2, binding = 1) readonly buffer ObjectBuffer{
 	Materials nr[];
 } material;
 
